@@ -1,0 +1,1075 @@
+<style>
+  :root{
+    --paper:#F2EFE6;
+    --paper-raised:#FBFAF5;
+    --ink:#20262B;
+    --ink-soft:#5C6670;
+    --line:#CBCABD;
+    --line-strong:#9CA39A;
+    --accent:#B3402A;
+    --accent-soft:#B3402A1a;
+    --accent2:#2C7A8C;
+    --accent2-soft:#2C7A8C1a;
+    --st-new:#6B7686;
+    --st-review:#A6790F;
+    --st-confirmed:#2C6FB0;
+    --st-progress:#7355B8;
+    --st-ready:#2E8B57;
+    --st-done:#556B5E;
+    --st-cancel:#A63B33;
+    --font-display: Palatino, "Palatino Linotype", "Iowan Old Style", Georgia, "Times New Roman", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "Cascadia Code", "SF Mono", Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#12161A;
+      --paper-raised:#1A2025;
+      --ink:#E9E5D8;
+      --ink-soft:#9AA3AA;
+      --line:#333C42;
+      --line-strong:#4A555C;
+      --accent:#E17A5F;
+      --accent-soft:#E17A5f22;
+      --accent2:#5FBAC9;
+      --accent2-soft:#5FBAC922;
+      --st-new:#8B95A3;
+      --st-review:#D6A63C;
+      --st-confirmed:#6FA8DC;
+      --st-progress:#A78BE0;
+      --st-ready:#5FBE8A;
+      --st-done:#8FA69A;
+      --st-cancel:#E08078;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#12161A; --paper-raised:#1A2025; --ink:#E9E5D8; --ink-soft:#9AA3AA;
+    --line:#333C42; --line-strong:#4A555C; --accent:#E17A5F; --accent-soft:#E17A5f22;
+    --accent2:#5FBAC9; --accent2-soft:#5FBAC922;
+    --st-new:#8B95A3; --st-review:#D6A63C; --st-confirmed:#6FA8DC; --st-progress:#A78BE0;
+    --st-ready:#5FBE8A; --st-done:#8FA69A; --st-cancel:#E08078;
+  }
+  :root[data-theme="light"]{
+    --paper:#F2EFE6; --paper-raised:#FBFAF5; --ink:#20262B; --ink-soft:#5C6670;
+    --line:#CBCABD; --line-strong:#9CA39A; --accent:#B3402A; --accent-soft:#B3402A1a;
+    --accent2:#2C7A8C; --accent2-soft:#2C7A8C1a;
+    --st-new:#6B7686; --st-review:#A6790F; --st-confirmed:#2C6FB0; --st-progress:#7355B8;
+    --st-ready:#2E8B57; --st-done:#556B5E; --st-cancel:#A63B33;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:15.5px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;text-wrap:balance;margin:0;}
+  a{color:var(--accent2);}
+  a:focus-visible, .toc a:focus-visible{outline:2px solid var(--accent2); outline-offset:3px; border-radius:2px;}
+  p{margin:0 0 .8em;}
+  .mono{font-family:var(--font-mono);}
+  .eyebrow{
+    display:flex;align-items:center;gap:.5em;
+    font-family:var(--font-mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:.6em;
+  }
+  .eyebrow svg{color:var(--accent);flex:none;}
+  .regmark{opacity:.9;}
+
+  .page{max-width:1280px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 80px;}
+
+  .masthead{
+    padding:56px 0 30px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:34px;
+  }
+  .masthead .kicker{
+    font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  }
+  .masthead .kicker .sep{opacity:.5;}
+  .masthead h1{font-size:clamp(28px,4vw,42px);letter-spacing:-.01em;}
+  .masthead .lede{
+    max-width:66ch;margin-top:16px;font-size:16.5px;color:var(--ink-soft);
+  }
+  .masthead .lede strong{color:var(--ink);font-weight:600;}
+  .scope-note{
+    margin-top:22px;display:flex;gap:10px;flex-wrap:wrap;
+  }
+  .pill{
+    font-family:var(--font-mono);font-size:11.5px;letter-spacing:.03em;
+    border:1px solid var(--line-strong);border-radius:100px;padding:5px 12px;color:var(--ink-soft);
+    background:var(--paper-raised);
+  }
+
+  .layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:44px;align-items:start;}
+  @media (max-width:900px){ .layout{grid-template-columns:1fr;} }
+
+  .toc{position:sticky;top:20px;max-height:calc(100vh - 40px);overflow-y:auto;padding-right:6px;}
+  .toc .toc-title{font-family:var(--font-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;}
+  .toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+  .toc a{
+    display:block;text-decoration:none;color:var(--ink-soft);font-size:13.5px;
+    padding:6px 10px;border-radius:5px;border-left:2px solid transparent;
+  }
+  .toc a:hover{color:var(--ink);background:var(--paper-raised);border-left-color:var(--line-strong);}
+  .toc .num{font-family:var(--font-mono);color:var(--accent);margin-right:8px;font-size:11.5px;}
+  @media (max-width:900px){
+    .toc{position:static;max-height:none;overflow:visible;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:8px;}
+    .toc ol{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;gap:4px;}
+    .toc a{white-space:nowrap;}
+  }
+
+  main{min-width:0;}
+  section{margin-bottom:64px;scroll-margin-top:16px;}
+  section h2{font-size:clamp(22px,3vw,28px);margin-bottom:8px;}
+  section > .desc{max-width:70ch;color:var(--ink-soft);margin-bottom:22px;}
+  section > .desc strong{color:var(--ink);}
+
+  .diagram-frame{
+    border:1px solid var(--line);border-radius:8px;background:var(--paper-raised);
+    padding:18px;overflow-x:auto;
+  }
+  .diagram-frame pre.mermaid{margin:0;display:flex;justify-content:center;min-width:560px;}
+
+  /* ---- Legend ---- */
+  .legend{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;
+    border:1px solid var(--line);border-radius:8px;padding:18px 20px;background:var(--paper-raised);
+  }
+  .legend-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-soft);}
+  .legend-swatch{flex:none;width:30px;height:20px;border-radius:3px;}
+  .sw-block{border:1.5px dashed var(--line-strong);}
+  .sw-img{background-image:repeating-linear-gradient(45deg, var(--line-strong) 0 1px, transparent 1px 7px);border:1px solid var(--line-strong);}
+  .sw-btn{background:var(--ink);}
+  .sw-field{border-bottom:2px solid var(--ink-soft);}
+  .sw-chip{background:var(--accent2-soft);border:1px solid var(--accent2);border-radius:100px;}
+  .sw-accent{background:var(--accent-soft);border:1px solid var(--accent);}
+
+  /* ---- Wireframe window chrome ---- */
+  .wf-shell{margin-top:8px;}
+  .wf-window{
+    border:1px solid var(--line-strong);border-radius:10px;overflow:hidden;background:var(--paper-raised);
+    box-shadow:0 1px 0 var(--line);
+  }
+  .wf-chrome{
+    height:30px;display:flex;align-items:center;gap:6px;padding:0 12px;
+    background:var(--paper);border-bottom:1px solid var(--line);
+  }
+  .wf-chrome .dot{width:8px;height:8px;border-radius:50%;background:var(--line-strong);}
+  .wf-chrome .url{
+    margin-left:10px;font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:4px;padding:2px 10px;
+  }
+  .wf-view{padding:26px 22px 22px;}
+  .wf-window.phone{width:300px;margin:0 auto;}
+  .wf-window.phone .wf-view{padding:22px 14px 16px;}
+
+  /* generic block */
+  .blk{position:relative;border:1.5px dashed var(--line-strong);border-radius:5px;padding:14px 12px 12px;background:transparent;}
+  .blk > .tag{
+    position:absolute;top:-9px;left:10px;background:var(--paper-raised);padding:0 6px;
+    font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);
+  }
+  .blk-note{font-size:12px;color:var(--ink-soft);margin-top:4px;}
+  .blk-note.bold{color:var(--ink);}
+
+  .row{display:flex;gap:14px;}
+  .col{display:flex;flex-direction:column;gap:14px;}
+  .grid{display:grid;gap:14px;}
+  .g2{grid-template-columns:1fr 1fr;}
+  .g3{grid-template-columns:repeat(3,1fr);}
+  .g4{grid-template-columns:repeat(4,1fr);}
+  @media (max-width:640px){ .g2,.g3,.g4{grid-template-columns:1fr 1fr;} }
+
+  .imgph{
+    background-image:repeating-linear-gradient(45deg, var(--line) 0 1px, transparent 1px 8px);
+    border:1px solid var(--line-strong);border-radius:4px;min-height:64px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-mono);font-size:10px;color:var(--ink-soft);letter-spacing:.06em;
+  }
+  .btnph{
+    background:var(--ink);color:var(--paper);border-radius:5px;padding:9px 16px;
+    font-family:var(--font-mono);font-size:11.5px;text-align:center;letter-spacing:.03em;
+    text-transform:uppercase;white-space:nowrap;
+  }
+  .btnph.ghost{background:transparent;color:var(--ink);border:1.3px solid var(--ink-soft);}
+  .btnph.accent{background:var(--accent);color:#fff;}
+  .fieldph{border-bottom:2px solid var(--ink-soft);padding:4px 2px 6px;}
+  .fieldph .flabel{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);}
+  .fieldph .fval{font-size:12.5px;color:var(--ink-soft);margin-top:3px;}
+
+  .chip{
+    display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:10.5px;
+    letter-spacing:.03em;padding:3px 10px;border-radius:100px;border:1px solid; white-space:nowrap;
+  }
+  .chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .chip.new{color:var(--st-new);border-color:var(--st-new);background:color-mix(in srgb, var(--st-new) 12%, transparent);}
+  .chip.review{color:var(--st-review);border-color:var(--st-review);background:color-mix(in srgb, var(--st-review) 12%, transparent);}
+  .chip.confirmed{color:var(--st-confirmed);border-color:var(--st-confirmed);background:color-mix(in srgb, var(--st-confirmed) 12%, transparent);}
+  .chip.progress{color:var(--st-progress);border-color:var(--st-progress);background:color-mix(in srgb, var(--st-progress) 12%, transparent);}
+  .chip.ready{color:var(--st-ready);border-color:var(--st-ready);background:color-mix(in srgb, var(--st-ready) 12%, transparent);}
+  .chip.done{color:var(--st-done);border-color:var(--st-done);background:color-mix(in srgb, var(--st-done) 12%, transparent);}
+  .chip.cancel{color:var(--st-cancel);border-color:var(--st-cancel);background:color-mix(in srgb, var(--st-cancel) 12%, transparent);}
+
+  .accent-box{
+    border:1.3px solid var(--accent);background:var(--accent-soft);border-radius:6px;padding:12px 14px;
+  }
+  .accent-box .lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+  .accent-box p{margin:0;font-size:13px;color:var(--ink);}
+
+  .accent2-box{border:1.3px solid var(--accent2);background:var(--accent2-soft);border-radius:6px;padding:12px 14px;}
+  .accent2-box .lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent2);margin-bottom:6px;}
+
+  .price-big{font-family:var(--font-display);font-size:30px;font-variant-numeric:tabular-nums;}
+  .price-sub{font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);}
+
+  /* two-column layout for wireframe + annotations */
+  .wf-pair{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(240px,1fr);gap:26px;align-items:start;margin-top:18px;}
+  @media (max-width:920px){ .wf-pair{grid-template-columns:1fr;} }
+  .notes{border-left:2px solid var(--line);padding-left:16px;}
+  .notes h4{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;}
+  .notes ul{margin:0 0 16px;padding-left:18px;font-size:13.5px;}
+  .notes li{margin-bottom:6px;}
+  .notes li::marker{color:var(--accent2);}
+
+  table.spec{width:100%;border-collapse:collapse;font-size:13px;}
+  table.spec th,table.spec td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);}
+  table.spec th{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;}
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;}
+  .table-wrap table.spec{min-width:520px;}
+  .table-wrap table.spec th,.table-wrap table.spec td{border-bottom:1px solid var(--line);}
+  .table-wrap table.spec tr:last-child td{border-bottom:none;}
+
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;}
+  .tabph{
+    font-family:var(--font-mono);font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;
+    padding:6px 12px;border:1px solid var(--line-strong);border-radius:6px 6px 0 0;color:var(--ink-soft);
+  }
+  .tabph.active{color:var(--ink);border-bottom-color:var(--paper-raised);background:var(--paper-raised);font-weight:600;}
+
+  .step-strip{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);margin-bottom:16px;flex-wrap:wrap;}
+  .step-strip .stepnum{
+    width:18px;height:18px;border-radius:50%;border:1px solid var(--line-strong);
+    display:inline-flex;align-items:center;justify-content:center;font-size:10px;
+  }
+  .step-strip .stepnum.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .step-strip .arrow{opacity:.5;}
+  .step-strip .stepdone{color:var(--st-ready);}
+
+  .callout-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .callout-list li{
+    display:flex;gap:10px;font-size:13.5px;padding:10px 12px;border:1px solid var(--line);
+    border-radius:6px;background:var(--paper-raised);
+  }
+  .callout-list b.k{font-family:var(--font-mono);color:var(--accent);flex:none;}
+
+  .footprint{
+    margin-top:70px;padding-top:26px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--ink-soft);font-size:13px;
+  }
+
+  .next-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+  .next-card{border:1px solid var(--line);border-radius:8px;padding:16px 18px;background:var(--paper-raised);}
+  .next-card.current{border-color:var(--accent);}
+  .next-card .k{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);}
+  .next-card.current .k{color:var(--accent);}
+  .next-card h4{font-size:16px;margin:6px 0 6px;}
+  .next-card p{font-size:13px;color:var(--ink-soft);margin:0;}
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="kicker">
+      <span>WebPrint-Order</span><span class="sep">/</span>
+      <span>Магистерская диссертация</span><span class="sep">/</span>
+      <span>Этап 1 · Проектирование интерфейса</span>
+    </div>
+    <h1>Прототипы интерфейса веб-системы сбора заказов</h1>
+    <p class="lede">
+      Ниже — структура системы и лаконичные wireframes шести ключевых экранов на основе ТЗ:
+      <strong>главная</strong>, <strong>каталог</strong>, <strong>карточка категории с калькулятором</strong>,
+      <strong>оформление заказа</strong>, <strong>личный кабинет</strong> и <strong>админ-панель</strong>.
+      Экраны рисуют расположение блоков и переходы, а не окончательный визуальный стиль.
+    </p>
+    <div class="scope-note">
+      <span class="pill">Без вёрстки и кода — только структура</span>
+      <span class="pill">Особый фокус: оформление заказа (п. 4.2.1–4.2.2 ТЗ)</span>
+      <span class="pill">Далее — ER-диаграмма БД</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="Оглавление">
+      <div class="toc-title">Содержание</div>
+      <ol>
+        <li><a href="#architecture"><span class="num">01</span>Архитектура</a></li>
+        <li><a href="#sitemap"><span class="num">02</span>Карта сайта</a></li>
+        <li><a href="#scenarios"><span class="num">03</span>Сценарии</a></li>
+        <li><a href="#legend"><span class="num">04</span>Легенда</a></li>
+        <li><a href="#wf-home"><span class="num">05</span>Главная</a></li>
+        <li><a href="#wf-catalog"><span class="num">06</span>Каталог</a></li>
+        <li><a href="#wf-category"><span class="num">07</span>Категория</a></li>
+        <li><a href="#wf-checkout"><span class="num">08</span>Оформление заказа</a></li>
+        <li><a href="#wf-cabinet"><span class="num">09</span>Личный кабинет</a></li>
+        <li><a href="#wf-admin"><span class="num">10</span>Админ-панель</a></li>
+        <li><a href="#next"><span class="num">11</span>Далее</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- 01 ARCHITECTURE -->
+      <section id="architecture">
+        <div class="eyebrow"><svg class="regmark" viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="12" y1="0" x2="12" y2="24" stroke="currentColor" stroke-width="1.3"/><line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>01 · Структура системы</div>
+        <h2>Три подсистемы поверх одного API и одной БД</h2>
+        <p class="desc">Согласно п. 4.1.1 ТЗ система состоит из публичной части, личного кабинета и админ-панели —
+        без отдельных ролей менеджера/производства. Все три подсистемы работают через общий REST API и одну базу данных,
+        так что цены и коэффициенты, заданные администратором, сразу видны в калькуляторе клиента.</p>
+        <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  subgraph U["Пользователи"]
+    Guest["Гость"]
+    Client["Клиент (авторизован)"]
+    AdminUser["Администратор"]
+  end
+
+  subgraph Pub["Публичная часть"]
+    Catalog["Каталог продукции"]
+    Category["Форма категории + калькулятор"]
+    Checkout["Оформление заказа"]
+  end
+
+  subgraph Cab["Личный кабинет"]
+    History["История заказов"]
+    Repeat["Повторный заказ"]
+  end
+
+  subgraph Adm["Админ-панель"]
+    AOrders["Заказы и статусы"]
+    APricing["Каталог, цены, коэффициенты"]
+  end
+
+  API["REST API"]
+  DB[("База данных")]
+
+  Guest --> Catalog
+  Client --> Catalog
+  Client --> Cab
+  AdminUser --> Adm
+  Catalog --> Category --> Checkout
+  Checkout --> API
+  Cab --> API
+  Adm --> API
+  API --> DB
+</pre>
+        </div>
+      </section>
+
+      <!-- 02 SITEMAP -->
+      <section id="sitemap">
+        <div class="eyebrow"><svg class="regmark" viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="12" y1="0" x2="12" y2="24" stroke="currentColor" stroke-width="1.3"/><line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>02 · Карта сайта</div>
+        <h2>Навигация верхнего уровня</h2>
+        <p class="desc">22 категории из п. 4.2.1 ведут в одну и ту же пару «Категория → Оформление заказа» —
+        отдельный шаблон, а не 22 уникальных страницы. Админ-панель — изолированный раздел со своим входом.</p>
+        <div class="diagram-frame">
+<pre class="mermaid">
+flowchart TD
+  Home["Главная"] --> Catalog["Каталог продукции"]
+  Home --> LoginPage["Вход / регистрация\n(необязательно)"]
+  Home --> Cabinet["Личный кабинет"]
+
+  Catalog --> CatOne["Категория, напр. «Визитки»"]
+  Catalog --> CatTwo["...ещё 21 категория"]
+
+  CatOne --> Checkout["Оформление заказа"]
+  CatTwo --> Checkout
+  Checkout --> ThankYou["Заказ принят (№, статус «Новый»)"]
+  ThankYou --> Cabinet
+
+  Cabinet --> Hist["История заказов"]
+  Cabinet --> Profile["Профиль клиента"]
+  Hist --> CatOne
+
+  LoginPage -.скрытый вход.-> Admin["/admin — Админ-панель/"]
+  Admin --> AOrders["Заказы"]
+  Admin --> APricing["Каталог и цены"]
+  Admin --> AClients["Клиенты"]
+</pre>
+        </div>
+      </section>
+
+      <!-- 03 SCENARIOS -->
+      <section id="scenarios">
+        <div class="eyebrow"><svg class="regmark" viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="12" y1="0" x2="12" y2="24" stroke="currentColor" stroke-width="1.3"/><line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>03 · Пользовательские сценарии</div>
+        <h2>Три сквозных пути</h2>
+        <p class="desc">Прежде чем рисовать экраны, важно зафиксировать, что именно на них должно происходить.</p>
+
+        <div class="col" style="gap:34px;">
+          <div>
+            <h4 style="font-family:var(--font-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;">Гость оформляет заказ без регистрации (п. 3.1, 4.2.3)</h4>
+            <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  A["Открывает каталог"] --> B["Выбирает категорию"]
+  B --> C["Задаёт параметры"]
+  C --> D{"Цена и срок\nпересчитываются\nавтоматически (&le; 1-2 сек)"}
+  D --> E["Переходит к оформлению"]
+  E --> F["Прикладывает макет\nили «пришлю позже»"]
+  F --> G["Указывает имя и телефон"]
+  G --> H["Подтверждает заказ"]
+  H --> I["Видит: стоимость предварительная,\nбудет подтверждена после проверки макета"]
+  I --> J["Заказ создан со статусом «Новый»"]
+</pre>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="font-family:var(--font-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;">Постоянный клиент повторяет прошлый заказ (п. 4.2.3)</h4>
+            <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  A["Личный кабинет → История заказов"] --> B["Находит прошлый заказ"]
+  B --> C["«Повторить заказ»"]
+  C --> D["Форма категории открыта\nс предзаполненными параметрами"]
+  D --> E["Корректирует при желании\n(цены пересчитаны по актуальному прайсу)"]
+  E --> F["Оформление заказа\n(контакты уже заполнены из профиля)"]
+  F --> G["Новый заказ создан"]
+</pre>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="font-family:var(--font-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;">Администратор обрабатывает заказ (п. 3.1, 4.2.4)</h4>
+            <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  A["Новый заказ в списке"] --> B["Открывает детали и макет"]
+  B --> C{"Всё корректно?"}
+  C -- "Нет" --> D["Уточняет у клиента\nвне системы (звонок/мессенджер)"]
+  D --> B
+  C -- "Да" --> E["Фиксирует окончательную\nстоимость и срок"]
+  E --> F["Статус «Подтверждён»"]
+  F --> G["«В работе»"]
+  G --> H["«Готов к выдаче»"]
+  H --> I["«Завершён»"]
+</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 LEGEND -->
+      <section id="legend">
+        <div class="eyebrow"><svg class="regmark" viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="12" y1="0" x2="12" y2="24" stroke="currentColor" stroke-width="1.3"/><line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>04 · Легенда обозначений</div>
+        <h2>Как читать wireframes ниже</h2>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-swatch sw-block"></span>Блок / контейнер компонента</div>
+          <div class="legend-item"><span class="legend-swatch sw-img"></span>Изображение / файл-плейсхолдер</div>
+          <div class="legend-item"><span class="legend-swatch sw-btn"></span>Кнопка / CTA</div>
+          <div class="legend-item"><span class="legend-swatch sw-field"></span>Поле ввода формы</div>
+          <div class="legend-item"><span class="legend-swatch sw-chip"></span>Статус / бейдж</div>
+          <div class="legend-item"><span class="legend-swatch sw-accent"></span>Обязательный текст ТЗ / важное уведомление</div>
+        </div>
+      </section>
+
+      <!-- 05 HOME -->
+      <section id="wf-home">
+        <div class="eyebrow"><svg class="regmark" viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="12" y1="0" x2="12" y2="24" stroke="currentColor" stroke-width="1.3"/><line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>05 · Главная страница</div>
+        <h2>Главная</h2>
+        <p class="desc">Задача страницы — за один экран объяснить, что здесь можно и рассчитать цену онлайн,
+        и как можно быстрее увести в каталог. Полноценного е-commerce функционала (корзина, оплата) не требуется — ведём к одной цели.</p>
+
+        <div class="wf-pair">
+          <div class="wf-shell">
+            <div class="wf-window">
+              <div class="wf-chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">webprint-order.ru</span></div>
+              <div class="wf-view">
+                <div class="col">
+                  <div class="blk row" style="justify-content:space-between;align-items:center;">
+                    <span class="tag">Header</span>
+                    <b class="mono" style="font-size:13px;">WebPrint-Order</b>
+                    <div class="row" style="gap:18px;font-size:12.5px;color:var(--ink-soft);">
+                      <span>Каталог</span><span>О производстве</span><span>Контакты</span>
+                    </div>
+                    <div class="row" style="gap:8px;">
+                      <span class="mono" style="font-size:11.5px;color:var(--ink-soft);">+7 900 000-00-00</span>
+                      <span class="btnph ghost">Войти</span>
+                    </div>
+                  </div>
+
+                  <div class="blk">
+                    <span class="tag">Hero</span>
+                    <div class="row" style="align-items:center;gap:22px;">
+                      <div class="col" style="flex:1;gap:10px;">
+                        <div style="font-family:var(--font-display);font-size:22px;line-height:1.2;">Полиграфия и сувенирная продукция&nbsp;— с расчётом цены онлайн</div>
+                        <div style="font-size:12.5px;color:var(--ink-soft);max-width:40ch;">Выберите категорию, укажите параметры — стоимость и срок посчитаются сразу, без звонков и переписки.</div>
+                        <div class="row" style="margin-top:6px;"><span class="btnph accent">Перейти в каталог</span></div>
+                      </div>
+                      <div class="imgph" style="flex:1;min-height:110px;">фото продукции</div>
+                    </div>
+                  </div>
+
+                  <div class="blk">
+                    <span class="tag">Как это работает</span>
+                    <div class="grid g4">
+                      <div class="col" style="gap:4px;"><div class="imgph" style="min-height:34px;">1</div><span style="font-size:11px;color:var(--ink-soft);">Выбор категории</span></div>
+                      <div class="col" style="gap:4px;"><div class="imgph" style="min-height:34px;">2</div><span style="font-size:11px;color:var(--ink-soft);">Параметры</span></div>
+                      <div class="col" style="gap:4px;"><div class="imgph" style="min-height:34px;">3</div><span style="font-size:11px;color:var(--ink-soft);">Цена сразу</span></div>
+                      <div class="col" style="gap:4px;"><div class="imgph" style="min-height:34px;">4</div><span style="font-size:11px;color:var(--ink-soft);">Макет и контакты</span></div>
+                    </div>
+                  </div>
+
+                  <div class="blk">
+                    <span class="tag">Популярные категории</span>
+                    <div class="grid g4">
+                      <div class="col" style="gap:6px;"><div class="imgph">визитки</div><span style="font-size:11px;">Визитки <span style="color:var(--ink-soft);">от 350₽</span></span></div>
+                      <div class="col" style="gap:6px;"><div class="imgph">наклейки</div><span style="font-size:11px;">Наклейки <span style="color:var(--ink-soft);">от 200₽</span></span></div>
+                      <div class="col" style="gap:6px;"><div class="imgph">ленты</div><span style="font-size:11px;">Ленты <span style="color:var(--ink-soft);">от 150₽</span></span></div>
+                      <div class="col" style="gap:6px;"><div class="imgph">пакеты</div><span style="font-size:11px;">Пакеты <span style="color:var(--ink-soft);">от 400₽</span></span></div>
+                    </div>
+                  </div>
+
+                  <div class="blk row" style="justify-content:space-between;font-size:11.5px;color:var(--ink-soft);">
+                    <span class="tag">Footer</span>
+                    <span>© Предприятие · адрес · режим работы</span>
+                    <span>Telegram · WhatsApp · VK</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="notes">
+            <h4>Зачем каждый блок</h4>
+            <ul>
+              <li>Телефон в шапке виден всегда — часть клиентов малого предприятия всё ещё звонит напрямую.</li>
+              <li>«Как это работает» снимает главный барьер: непонятно, что цену вообще можно узнать не звоня.</li>
+              <li>Карточки популярных категорий = быстрый вход в самый частый сценарий, минуя листание каталога.</li>
+              <li>Вход не обязателен для заказа (п. 4.2.3) — кнопка «Войти» вспомогательная, не блокирующая.</li>
+            </ul>
+            <h4>Адаптивность</h4>
+            <ul>
+              <li>Мобильная версия: hero-текст и фото — в столбец; сетка категорий 4→2 колонки.</li>
+              <li>Меню шапки сворачивается в гамбургер, телефон остаётся виден как иконка-кнопка звонка.</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <!-- 06 CATALOG -->
+      <section id="wf-catalog">
+        <div class="eyebrow"><svg class="regmark" viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="12" y1="0" x2="12" y2="24" stroke="currentColor" stroke-width="1.3"/><line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>06 · Каталог продукции</div>
+        <h2>Каталог (22 категории)</h2>
+        <p class="desc">ТЗ не требует группировки, но при 22 плоских карточках навигация усложняется —
+        предлагается группировка по назначению продукции и поиск по названию. Это UX-дополнение сверх минимума ТЗ, вынесенное отдельно для обсуждения с заказчиком.</p>
+
+        <div class="wf-pair">
+          <div class="wf-shell">
+            <div class="wf-window">
+              <div class="wf-chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">webprint-order.ru/catalog</span></div>
+              <div class="wf-view">
+                <div class="col">
+                  <div style="font-size:11.5px;color:var(--ink-soft);">Главная / <b style="color:var(--ink);">Каталог</b></div>
+
+                  <div class="blk row" style="justify-content:space-between;align-items:center;">
+                    <span class="tag">Поиск и фильтр групп</span>
+                    <div class="fieldph" style="flex:1;max-width:260px;"><span class="fval">Поиск по каталогу…</span></div>
+                    <div class="tabs">
+                      <span class="tabph active">Все</span>
+                      <span class="tabph">Бумажная продукция</span>
+                      <span class="tabph">Упаковка</span>
+                      <span class="tabph">Текстиль и бирки</span>
+                      <span class="tabph">Пластик и сувениры</span>
+                    </div>
+                  </div>
+
+                  <div class="blk">
+                    <span class="tag">Сетка категорий</span>
+                    <div class="grid g4">
+                      <div class="col" style="gap:6px;"><div class="imgph">img</div><span style="font-size:11.5px;">Визитки</span><span class="btnph ghost" style="font-size:10px;">от 350₽</span></div>
+                      <div class="col" style="gap:6px;"><div class="imgph">img</div><span style="font-size:11.5px;">Ленты</span><span class="btnph ghost" style="font-size:10px;">от 150₽</span></div>
+                      <div class="col" style="gap:6px;"><div class="imgph">img</div><span style="font-size:11.5px;">Открытки</span><span class="btnph ghost" style="font-size:10px;">от 90₽</span></div>
+                      <div class="col" style="gap:6px;"><div class="imgph">img</div><span style="font-size:11.5px;">Буклеты</span><span class="btnph ghost" style="font-size:10px;">от 20₽</span></div>
+                      <div class="col" style="gap:6px;"><div class="imgph">img</div><span style="font-size:11.5px;">Листовки</span><span class="btnph ghost" style="font-size:10px;">от 6₽</span></div>
+                      <div class="col" style="gap:6px;"><div class="imgph">img</div><span style="font-size:11.5px;">Наклейки</span><span class="btnph ghost" style="font-size:10px;">от 15₽</span></div>
+                      <div class="col" style="gap:6px;"><div class="imgph">img</div><span style="font-size:11.5px;">Штампы</span><span class="btnph ghost" style="font-size:10px;">от 500₽</span></div>
+                      <div class="col" style="gap:6px;"><div class="imgph">img</div><span style="font-size:11.5px;">ПВХ-таблички</span><span class="btnph ghost" style="font-size:10px;">от 300₽</span></div>
+                      <div class="col" style="gap:6px;justify-content:center;align-items:center;border:1px dashed var(--line);border-radius:4px;color:var(--ink-soft);font-size:11px;">+ ещё 14 категорий</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="notes">
+            <h4>Зачем каждый блок</h4>
+            <ul>
+              <li>Группы — предложенная категоризация 22 позиций из п. 4.2.1; финальные названия групп утверждает администратор при наполнении.</li>
+              <li>Карточка целиком кликабельна → ведёт сразу на форму категории, отдельная страница описания не нужна.</li>
+              <li>Цена «от…» берётся из минимального диапазона тиражной сетки категории (п. 4.2.2) — держит ожидания клиента честными.</li>
+            </ul>
+            <h4>Адаптивность</h4>
+            <ul>
+              <li>Группы-вкладки на мобильном — горизонтальный скролл-ряд чипов.</li>
+              <li>Сетка карточек: 4 → 2 колонки на планшете → 1–2 на смартфоне.</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <!-- 07 CATEGORY -->
+      <section id="wf-category">
+        <div class="eyebrow"><svg class="regmark" viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="12" y1="0" x2="12" y2="24" stroke="currentColor" stroke-width="1.3"/><line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>07 · Страница категории</div>
+        <h2>Категория продукции — на примере «Визитки»</h2>
+        <p class="desc">Единый шаблон для всех 22 категорий: набор полей формы для каждой категории свой
+        (задаётся администратором, п. 4.2.4), но расположение — параметры слева/сверху, калькулятор справа/снизу — одинаковое.
+        Значения выбираются из списков, не вводятся текстом (п. 4.2.1).</p>
+
+        <div class="wf-pair">
+          <div class="wf-shell">
+            <div class="wf-window">
+              <div class="wf-chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">webprint-order.ru/catalog/vizitki</span></div>
+              <div class="wf-view">
+                <div style="font-size:11.5px;color:var(--ink-soft);margin-bottom:12px;">Главная / Каталог / <b style="color:var(--ink);">Визитки</b></div>
+                <div class="row" style="align-items:flex-start;gap:16px;">
+
+                  <div class="col" style="flex:1.3;gap:14px;">
+                    <div class="blk">
+                      <span class="tag">Галерея примеров</span>
+                      <div class="grid g3"><div class="imgph">1</div><div class="imgph">2</div><div class="imgph">3</div></div>
+                      <p class="blk-note" style="margin-top:8px;">Визитки — визитные карточки для бизнеса и частных лиц. Срок изготовления: <b class="blk-note bold">от 2 рабочих дней</b>.</p>
+                    </div>
+
+                    <div class="blk">
+                      <span class="tag">Параметры заказа</span>
+                      <div class="col" style="gap:12px;">
+                        <div class="fieldph"><div class="flabel">Размер</div><div class="fval">◉ 90×50 мм &nbsp; ○ 85×55 мм (евро) &nbsp; ○ свой размер</div></div>
+                        <div class="fieldph"><div class="flabel">Плотность бумаги</div><div class="fval">300 г/м² ▾</div></div>
+                        <div class="fieldph"><div class="flabel">Цветность печати</div><div class="fval">◉ 4+4 (двусторонняя)  ○ 4+0 (односторонняя)</div></div>
+                        <div class="fieldph"><div class="flabel">Ламинация</div><div class="fval">○ без  ○ глянцевая  ◉ матовая</div></div>
+                        <div class="fieldph"><div class="flabel">Скругление углов</div><div class="fval">○ да  ◉ нет</div></div>
+                        <div class="fieldph"><div class="flabel">Тираж, шт</div><div class="fval">[ 50 ] [ 100 ] [ 200 ] [ 500 ] [ свой: ___ ]</div></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col" style="flex:1;gap:14px;position:sticky;top:10px;">
+                    <div class="blk" style="background:var(--paper);">
+                      <span class="tag">Калькулятор — обновляется мгновенно</span>
+                      <div class="col" style="gap:4px;">
+                        <span class="price-sub">Цена за 1 шт.</span>
+                        <span style="font-size:15px;font-variant-numeric:tabular-nums;">7,80 ₽</span>
+                        <div style="height:1px;background:var(--line);margin:6px 0;"></div>
+                        <span class="price-sub">Итого за тираж</span>
+                        <span class="price-big">1&nbsp;560 ₽</span>
+                        <span class="price-sub">Срок изготовления: 2–3 рабочих дня</span>
+                      </div>
+                      <div style="margin-top:12px;"><span class="btnph accent" style="display:block;text-align:center;">Оформить заказ →</span></div>
+                    </div>
+                    <div class="accent-box">
+                      <div class="lbl">Подсказка</div>
+                      <p>Итог пересчитывается при каждом изменении параметра, без перезагрузки страницы и без отправки формы.</p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="notes">
+            <h4>Логика расчёта на экране (п. 4.2.2)</h4>
+            <ul>
+              <li>Базовая цена берётся по диапазону тиража (1–50 / 51–200 / &gt;200 шт.).</li>
+              <li>Каждый выбранный параметр умножает/добавляет коэффициент, заданный администратором.</li>
+              <li>Формула: <span class="mono">Цена/шт × Тираж + доп. услуги</span> — пересчёт на <span class="mono">onChange</span>, без submit.</li>
+            </ul>
+            <h4>Почему калькулятор справа и «прилипает»</h4>
+            <ul>
+              <li>Форма параметров может быть длинной (до 6–8 полей на категорию) — цена должна быть видна всегда, а не только внизу формы.</li>
+              <li>Кнопка перехода к оформлению — прямо под ценой, а не в конце длинной формы.</li>
+            </ul>
+            <h4>Адаптивность</h4>
+            <ul>
+              <li>На мобильном калькулятор превращается в закреплённую снизу панель «Итого: 1560 ₽ · Оформить заказ», а поля формы идут одной колонкой выше.</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <!-- 08 CHECKOUT — SPECIAL FOCUS -->
+      <section id="wf-checkout">
+        <div class="eyebrow"><svg class="regmark" viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="12" y1="0" x2="12" y2="24" stroke="currentColor" stroke-width="1.3"/><line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>08 · Оформление заказа — основной функционал</div>
+        <h2>Оформление заказа</h2>
+        <p class="desc">Эта страница закрывает шаги 4–7 из п. 3.1 ТЗ: макет, контакты, обязательное уведомление
+        о предварительности цены и создание заказа со статусом «Новый». Ей уделено больше внимания, чем остальным экранам, по прямой просьбе — это ядро системы.</p>
+
+        <div class="step-strip">
+          <span class="stepdone">✓ Параметры</span><span class="arrow">→</span>
+          <span class="stepnum active">2</span><span>Макет и контакты</span><span class="arrow">→</span>
+          <span class="stepnum">3</span><span>Заказ принят</span>
+        </div>
+
+        <div class="wf-pair">
+          <div class="wf-shell">
+            <div class="wf-window">
+              <div class="wf-chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">webprint-order.ru/order/new</span></div>
+              <div class="wf-view">
+                <div class="row" style="align-items:flex-start;gap:16px;">
+
+                  <div class="col" style="flex:1.4;gap:14px;">
+
+                    <div class="blk">
+                      <span class="tag">Ваш заказ</span>
+                      <div class="row" style="justify-content:space-between;align-items:center;">
+                        <span style="font-size:13px;">Визитки · 90×50 · 300 г/м² · 4+4 · матовая ламинация · тираж 200 шт.</span>
+                        <span class="btnph ghost" style="font-size:10px;">Изменить параметры</span>
+                      </div>
+                    </div>
+
+                    <div class="blk">
+                      <span class="tag">Макет</span>
+                      <div class="imgph" style="min-height:70px;">Перетащите файл сюда или нажмите, чтобы выбрать</div>
+                      <p class="blk-note">Форматы: PDF, AI, TIFF, JPG, PNG · до 50 МБ</p>
+                      <div class="fieldph" style="border:none;margin-top:4px;"><div class="fval">☐ Макета пока нет — пришлю позже</div></div>
+                    </div>
+
+                    <div class="blk">
+                      <span class="tag">Контактные данные</span>
+                      <div class="grid g2">
+                        <div class="fieldph"><div class="flabel">Имя *</div><div class="fval">Анна Петрова</div></div>
+                        <div class="fieldph"><div class="flabel">Телефон *</div><div class="fval">+7 900 000-00-00</div></div>
+                        <div class="fieldph"><div class="flabel">E-mail</div><div class="fval">anna@mail.ru</div></div>
+                        <div class="fieldph"><div class="flabel">Организация (если юр. лицо)</div><div class="fval">—</div></div>
+                      </div>
+                      <div class="fieldph" style="margin-top:12px;"><div class="flabel">Комментарий к заказу</div><div class="fval">напр. «нужен срочно к пятнице»</div></div>
+                      <div class="fieldph" style="border:none;margin-top:10px;"><div class="fval">☐ Согласен на обработку персональных данных (152-ФЗ) *</div></div>
+                    </div>
+
+                    <div class="accent2-box">
+                      <div class="lbl">Необязательно</div>
+                      <p style="margin:0;font-size:13px;">Гость: «Хотите отслеживать заказ в личном кабинете? <u>Войти / зарегистрироваться</u>» — данные формы сохранятся.</p>
+                    </div>
+
+                    <span class="btnph accent" style="display:block;text-align:center;padding:13px;font-size:12.5px;">Подтвердить заказ</span>
+                  </div>
+
+                  <div class="col" style="flex:1;gap:14px;position:sticky;top:10px;">
+                    <div class="blk" style="background:var(--paper);">
+                      <span class="tag">Итого</span>
+                      <table class="spec" style="margin-bottom:8px;">
+                        <tr><td>Визитки, 4+4, матовая</td><td style="text-align:right;">200 шт.</td></tr>
+                        <tr><td>Цена за 1 шт.</td><td style="text-align:right;">7,80 ₽</td></tr>
+                      </table>
+                      <div style="height:1px;background:var(--line);margin:4px 0 10px;"></div>
+                      <span class="price-sub">Предварительная стоимость</span>
+                      <div class="price-big">1&nbsp;560 ₽</div>
+                      <span class="price-sub">Срок: 2–3 рабочих дня</span>
+                    </div>
+
+                    <div class="accent-box">
+                      <div class="lbl">Обязательное уведомление (п. 4.2.1 ТЗ)</div>
+                      <p>«Предварительная стоимость рассчитана автоматически. Окончательная стоимость будет подтверждена после проверки макета.»</p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="notes">
+            <h4>Почему структура именно такая</h4>
+            <ul>
+              <li>Блок «Ваш заказ» сверху и сворачиваемый — подтверждает клиенту, что параметры не потерялись при переходе со страницы категории; «Изменить параметры» возвращает назад с сохранением выбора.</li>
+              <li>Чекбокс «пришлю позже» — единственный способ отправить заказ без файла (п. 4.2.1); при его выборе зона загрузки скрывается/блокируется.</li>
+              <li>Итоговая карточка справа закреплена (sticky) и видна на всём протяжении прокрутки формы — клиент никогда не теряет из виду сумму.</li>
+              <li>Обязательный дисклеймер о предварительности цены — не тост, который исчезает, а видимый блок рядом с ценой <em>и</em> текст, который останется на экране подтверждения.</li>
+              <li>Вход/регистрация — необязательны и предлагаются мягко, не блокируя отправку (п. 4.2.3: «можно войти без регистрации, чтобы проверить цены»).</li>
+              <li>Согласие на 152-ФЗ — обязательный чекбокс, т.к. форма собирает ФИО, телефон, e-mail (п. 4.1.6).</li>
+            </ul>
+            <h4>Надёжность (п. 4.1.4)</h4>
+            <ul>
+              <li>Черновик формы (параметры + контакты) автосохраняется в браузере при вводе — при случайном закрытии вкладки или обрыве связи данные не теряются.</li>
+              <li>Валидация инлайн: обязательные поля, маска телефона, проверка формата/размера файла — ошибка показывается сразу у поля, без сброса остальной формы.</li>
+            </ul>
+            <h4>Экран «Заказ принят» (шаг 3)</h4>
+            <ul>
+              <li>Номер заказа, статус «Новый», тот же текст о предварительности цены, кнопки «В личный кабинет» и «Вернуться в каталог».</li>
+            </ul>
+          </aside>
+        </div>
+
+        <div style="margin-top:26px;">
+          <div class="eyebrow" style="margin-bottom:10px;"><span class="mono" style="color:var(--ink-soft);font-size:11px;">Мобильная версия</span></div>
+          <div class="wf-window phone">
+            <div class="wf-chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url" style="margin-left:auto;margin-right:auto;">order/new</span></div>
+            <div class="wf-view">
+              <div class="col" style="gap:10px;">
+                <div class="blk"><span class="tag">Заказ</span><span style="font-size:11px;">Визитки · 200 шт.</span></div>
+                <div class="blk"><span class="tag">Макет</span><div class="imgph" style="min-height:44px;">файл</div></div>
+                <div class="blk">
+                  <span class="tag">Контакты</span>
+                  <div class="col" style="gap:8px;">
+                    <div class="fieldph"><div class="flabel">Имя *</div></div>
+                    <div class="fieldph"><div class="flabel">Телефон *</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="border-top:1px solid var(--line);background:var(--paper);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+              <div class="col" style="gap:0;">
+                <span class="price-sub">Итого</span>
+                <span style="font-weight:700;font-variant-numeric:tabular-nums;">1 560 ₽</span>
+              </div>
+              <span class="btnph accent">Подтвердить</span>
+            </div>
+          </div>
+          <p class="blk-note" style="text-align:center;margin-top:8px;">Закреплённая нижняя панель с итогом и кнопкой отправки — форма длинная, сумма должна быть видна всегда.</p>
+        </div>
+      </section>
+
+      <!-- 09 CABINET -->
+      <section id="wf-cabinet">
+        <div class="eyebrow"><svg class="regmark" viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="12" y1="0" x2="12" y2="24" stroke="currentColor" stroke-width="1.3"/><line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>09 · Личный кабинет клиента</div>
+        <h2>Личный кабинет</h2>
+        <p class="desc">Центр экрана — история заказов со статусами (п. 4.2.3). Действие «Повторить заказ» — самый частый переход для постоянных клиентов малого предприятия.</p>
+
+        <div class="wf-pair">
+          <div class="wf-shell">
+            <div class="wf-window">
+              <div class="wf-chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">webprint-order.ru/account/orders</span></div>
+              <div class="wf-view">
+                <div class="row" style="align-items:flex-start;gap:16px;">
+                  <div class="col" style="flex:0 0 150px;gap:6px;">
+                    <div class="btnph" style="background:var(--ink);text-align:left;">Мои заказы</div>
+                    <div class="btnph ghost" style="text-align:left;">Профиль</div>
+                    <div class="btnph ghost" style="text-align:left;">Выйти</div>
+                  </div>
+
+                  <div class="col" style="flex:1;gap:12px;">
+                    <div class="table-wrap">
+                      <table class="spec">
+                        <tr><th>Дата</th><th>Категория / параметры</th><th>Стоимость</th><th>Статус</th><th></th></tr>
+                        <tr>
+                          <td>18.07.2026</td>
+                          <td>Визитки, 200 шт., матовая ламинация</td>
+                          <td>1 560 ₽ <span style="color:var(--ink-soft);">(предв.)</span></td>
+                          <td><span class="chip review">На проверке</span></td>
+                          <td><span class="btnph ghost" style="font-size:10px;">Детали</span></td>
+                        </tr>
+                        <tr>
+                          <td>05.07.2026</td>
+                          <td>Наклейки, круг 40мм, 500 шт.</td>
+                          <td>2 100 ₽ <span style="color:var(--ink-soft);">(оконч.)</span></td>
+                          <td><span class="chip progress">В работе</span></td>
+                          <td><span class="btnph ghost" style="font-size:10px;">Повторить</span></td>
+                        </tr>
+                        <tr>
+                          <td>22.06.2026</td>
+                          <td>Ленты, атлас, 25мм, 30м</td>
+                          <td>980 ₽</td>
+                          <td><span class="chip done">Завершён</span></td>
+                          <td><span class="btnph ghost" style="font-size:10px;">Повторить</span></td>
+                        </tr>
+                        <tr>
+                          <td>14.06.2026</td>
+                          <td>Буклеты А4, евробуклет, 100 шт.</td>
+                          <td>—</td>
+                          <td><span class="chip cancel">Отменён</span></td>
+                          <td><span class="btnph ghost" style="font-size:10px;">Повторить</span></td>
+                        </tr>
+                      </table>
+                    </div>
+
+                    <div class="blk">
+                      <span class="tag">Детали заказа №1042 (разворачивается)</span>
+                      <div class="row" style="gap:22px;flex-wrap:wrap;">
+                        <div class="col" style="gap:4px;flex:1;min-width:180px;">
+                          <span style="font-size:11.5px;color:var(--ink-soft);">Параметры</span>
+                          <span style="font-size:12.5px;">90×50, 300г/м², 4+4, матовая, без скругления, тираж 200</span>
+                        </div>
+                        <div class="col" style="gap:4px;">
+                          <span style="font-size:11.5px;color:var(--ink-soft);">Макет</span>
+                          <span class="btnph ghost" style="font-size:10px;">vizitka_final.pdf ↑ заменить</span>
+                        </div>
+                        <div class="col" style="gap:4px;">
+                          <span style="font-size:11.5px;color:var(--ink-soft);">История статуса</span>
+                          <span style="font-size:11.5px;">Новый → <b>На проверке</b></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="notes">
+            <h4>Ключевые элементы</h4>
+            <ul>
+              <li>Статус — цветной чип, а не только текст, чтобы состояние читалось с одного взгляда по списку из 10+ заказов.</li>
+              <li>«Повторить заказ» ведёт на страницу категории с уже выставленными значениями полей — клиент донастраивает и подтверждает, цена считается по текущему прайсу, а не по цене прошлого заказа.</li>
+              <li>«Загрузить/заменить макет» доступно прямо из деталей заказа — закрывает сценарий «макет пришлю позже» из п. 4.2.1.</li>
+              <li>Пустое состояние (нет заказов): иллюстрация-плейсхолдер + текст «Заказов пока нет» + кнопка «Перейти в каталог».</li>
+            </ul>
+            <h4>Адаптивность</h4>
+            <ul>
+              <li>На мобильном таблица превращается в стопку карточек: одна карточка = один заказ, с тем же чипом статуса.</li>
+              <li>Левое меню — верхние табы вместо боковой колонки.</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <!-- 10 ADMIN -->
+      <section id="wf-admin">
+        <div class="eyebrow"><svg class="regmark" viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="12" y1="0" x2="12" y2="24" stroke="currentColor" stroke-width="1.3"/><line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>10 · Административная панель</div>
+        <h2>Админ-панель — одна роль, без цехов и диспетчеризации</h2>
+        <p class="desc">Одна учётная запись администратора (п. 4.1.2). Два экрана закрывают всю ежедневную работу:
+        обработка заказов и управление ценами/каталогом (п. 4.2.4).</p>
+
+        <div class="wf-pair">
+          <div class="wf-shell">
+            <div class="wf-window">
+              <div class="wf-chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">webprint-order.ru/admin/orders</span></div>
+              <div class="wf-view">
+                <div class="row" style="align-items:flex-start;gap:16px;">
+                  <div class="col" style="flex:0 0 140px;gap:6px;">
+                    <div class="btnph" style="background:var(--ink);text-align:left;">Заказы</div>
+                    <div class="btnph ghost" style="text-align:left;">Каталог и цены</div>
+                    <div class="btnph ghost" style="text-align:left;">Клиенты</div>
+                    <div class="btnph ghost" style="text-align:left;">Журнал действий</div>
+                  </div>
+
+                  <div class="col" style="flex:1;gap:12px;">
+                    <div class="row" style="justify-content:space-between;align-items:center;">
+                      <div class="tabs">
+                        <span class="tabph active">Все · 24</span>
+                        <span class="tabph">Новые · 5</span>
+                        <span class="tabph">На проверке · 3</span>
+                        <span class="tabph">В работе · 6</span>
+                      </div>
+                      <div class="fieldph" style="max-width:160px;"><span class="fval">Фильтр по категории ▾</span></div>
+                    </div>
+
+                    <div class="table-wrap">
+                      <table class="spec">
+                        <tr><th>№</th><th>Клиент</th><th>Категория</th><th>Сумма</th><th>Статус</th></tr>
+                        <tr><td>1046</td><td>Анна Петрова</td><td>Визитки, 200 шт.</td><td>1 560 ₽</td><td><span class="chip new">Новый</span></td></tr>
+                        <tr><td>1045</td><td>ООО «Сфера»</td><td>Пакеты п/э, 1000 шт.</td><td>8 400 ₽</td><td><span class="chip review">На проверке</span></td></tr>
+                        <tr><td>1044</td><td>Игорь Ким</td><td>Штампы, 1 шт.</td><td>650 ₽</td><td><span class="chip confirmed">Подтверждён</span></td></tr>
+                        <tr><td>1043</td><td>Мария Орлова</td><td>Наклейки, 500 шт.</td><td>2 100 ₽</td><td><span class="chip progress">В работе</span></td></tr>
+                      </table>
+                    </div>
+
+                    <div class="blk">
+                      <span class="tag">Карточка заказа №1046 (открывается сбоку)</span>
+                      <div class="row" style="gap:20px;flex-wrap:wrap;">
+                        <div class="col" style="flex:1;min-width:160px;gap:4px;">
+                          <span style="font-size:11.5px;color:var(--ink-soft);">Параметры и макет</span>
+                          <div class="imgph" style="min-height:46px;">превью макета</div>
+                        </div>
+                        <div class="col" style="flex:1;min-width:160px;gap:6px;">
+                          <div class="fieldph"><div class="flabel">Окончательная стоимость</div><div class="fval">1 560 ₽</div></div>
+                          <div class="fieldph"><div class="flabel">Срок изготовления</div><div class="fval">3 рабочих дня</div></div>
+                          <div class="fieldph"><div class="flabel">Статус</div><div class="fval">Новый ▾</div></div>
+                          <span class="btnph accent" style="margin-top:4px;">Подтвердить заказ</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="notes">
+            <h4>Экран «Заказы»</h4>
+            <ul>
+              <li>Табы-счётчики по статусу — администратор один, ему важно сразу видеть, сколько заказов ждёт именно его действия.</li>
+              <li>Открытие заказа — боковая панель, а не отдельная страница: не терять контекст списка при разборе десятков заказов за день.</li>
+              <li>Смена статуса — выпадающий список с 7 фиксированными значениями из п. 4.2.4, без свободного ввода.</li>
+              <li>Каждое изменение цены/статуса пишется в журнал действий (п. 4.1.4) — для разбора спорных ситуаций с клиентом.</li>
+            </ul>
+          </aside>
+        </div>
+
+        <div style="margin-top:22px;">
+          <div class="wf-pair">
+            <div class="wf-shell">
+              <div class="wf-window">
+                <div class="wf-chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">webprint-order.ru/admin/catalog/vizitki</span></div>
+                <div class="wf-view">
+                  <div class="col" style="gap:12px;">
+                    <div class="tabs">
+                      <span class="tabph active">Параметры</span>
+                      <span class="tabph">Тиражная сетка</span>
+                      <span class="tabph">Доп. услуги</span>
+                      <span class="tabph">Срок изготовления</span>
+                    </div>
+                    <div class="table-wrap">
+                      <table class="spec">
+                        <tr><th>Параметр</th><th>Значение</th><th>Коэффициент / наценка</th></tr>
+                        <tr><td>Ламинация</td><td>Матовая</td><td>× 1,15</td></tr>
+                        <tr><td>Ламинация</td><td>Глянцевая</td><td>× 1,15</td></tr>
+                        <tr><td>Цветность</td><td>4+4</td><td>× 1,30</td></tr>
+                        <tr><td>Скругление углов</td><td>Да</td><td>+ 0,50 ₽/шт</td></tr>
+                      </table>
+                    </div>
+                    <span class="btnph ghost" style="align-self:flex-start;">+ Добавить значение параметра</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <aside class="notes">
+              <h4>Экран «Каталог и цены»</h4>
+              <ul>
+                <li>Вкладки соответствуют сущностям БД из п. 4.3.1: параметры категории, тиражная сетка, доп. услуги, срок изготовления.</li>
+                <li>Изменение здесь мгновенно меняет результат калькулятора на публичной форме категории — цены не зашиты в код (п. 4.2.2, требование 6.2).</li>
+                <li>Так же управляются размеры, цвета и материалы, добавление/удаление категорий и позиций (п. 4.2.4).</li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 NEXT -->
+      <section id="next">
+        <div class="eyebrow"><svg class="regmark" viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="12" y1="0" x2="12" y2="24" stroke="currentColor" stroke-width="1.3"/><line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>11 · Дальше</div>
+        <h2>Что закрыто и что дальше</h2>
+        <div class="next-grid">
+          <div class="next-card">
+            <div class="k">Сделано</div>
+            <h4>Структура и wireframes</h4>
+            <p>Архитектура из 3 подсистем, карта сайта, 3 сценария, 6 экранов с обоснованием каждого блока.</p>
+          </div>
+          <div class="next-card current">
+            <div class="k">Далее</div>
+            <h4>ER-диаграмма БД</h4>
+            <p>Сущности из п. 4.3.1: Пользователи, Категории, Параметры категории, Тиражная сетка, Заказы, Файлы макетов — со связями и атрибутами.</p>
+          </div>
+          <div class="next-card">
+            <div class="k">Потом</div>
+            <h4>Разработка</h4>
+            <p>API расчёта стоимости, публичная часть, личный кабинет, админ-панель — по составу работ из раздела 5 ТЗ.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="footprint">
+        <span>WebPrint-Order · Этап 1 — проектирование интерфейса</span>
+        <span>Код не писался — только структура и wireframes, по запросу</span>
+      </div>
+
+    </main>
+  </div>
+</div>
