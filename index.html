@@ -98,13 +98,41 @@
     display:flex; flex-direction:column; align-items:center; gap:12px;
     padding:0 20px clamp(22px,5vh,44px);
   }
-  .caption{
-    font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+  .eyebrow-label{
+    font-size:10px; letter-spacing:.18em; text-transform:uppercase;
     color:var(--ink-soft);
     opacity:0; transition:opacity .35s ease;
   }
+  #hero.ready .eyebrow-label{ opacity:1; }
+
+  .caption{
+    display:inline-flex; align-items:center; gap:7px;
+    font-size:13.5px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink); text-decoration:none;
+    opacity:0; transition:opacity .35s ease, color .25s ease;
+    cursor:pointer;
+  }
   #hero.ready .caption{ opacity:1; }
   .caption.is-out{ opacity:0 !important; }
+  .caption-text{
+    background-image:linear-gradient(var(--ink),var(--ink));
+    background-repeat:no-repeat;
+    background-position:0 100%;
+    background-size:0% 1px;
+    transition:background-size .3s ease;
+    padding-bottom:2px;
+  }
+  .caption-arrow{
+    display:inline-flex; width:15px; height:15px;
+    color:var(--gold-2);
+    transition:transform .3s cubic-bezier(.22,.61,.36,1);
+  }
+  .caption-arrow svg{ width:100%; height:100%; }
+  .caption:hover .caption-text,
+  .caption:focus-visible .caption-text{ background-size:100% 1px; }
+  .caption:hover .caption-arrow,
+  .caption:focus-visible .caption-arrow{ transform:translateX(4px); }
+  .caption:focus-visible{ outline:2px solid var(--gold-2); outline-offset:5px; border-radius:2px; }
   .dots{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; max-width:260px; opacity:0; transition:opacity .5s ease; }
   #hero.ready .dots{ opacity:1; }
   .dot{
@@ -121,7 +149,7 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    #mockups, .mockup, #logoLayer, .caption, .dots, .arrow{
+    #mockups, .mockup, #logoLayer, .caption, .caption-text, .caption-arrow, .eyebrow-label, .dots, .arrow{
       transition-duration:.001s !important;
       transition-delay:0s !important;
     }
@@ -131,19 +159,19 @@
 <section id="hero" aria-label="Витрина бренда tabaam.print">
   <div id="stage">
     <div id="mockups">
-      <div class="mockup" data-spot-x="48" data-spot-y="54" data-spot-w="32"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-12.png" alt="Картонные брендированные пакеты"></div></div>
-      <div class="mockup" data-spot-x="50" data-spot-y="57" data-spot-w="15"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-13.png" alt="Брендированная лента"></div></div>
-      <div class="mockup" data-spot-x="50" data-spot-y="58" data-spot-w="28"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-1.png" alt="Брендированные коробки"></div></div>
-      <div class="mockup" data-spot-x="50" data-spot-y="60" data-spot-w="26"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-4.png" alt="Подвесные картонные бирки"></div></div>
-      <div class="mockup" data-spot-x="50" data-spot-y="48" data-spot-w="13"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-9.png" alt="Пришивные бирки"></div></div>
-      <div class="mockup" data-spot-x="50" data-spot-y="48" data-spot-w="26"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-8.png" alt="Наклейки"></div></div>
-      <div class="mockup" data-spot-x="50" data-spot-y="44" data-spot-w="17"><div class="mockup-card"><img src="assets/image-25-07-26-08-34-1.png" alt="Корпоративная сувенирная продукция"></div></div>
-      <div class="mockup" data-spot-x="38" data-spot-y="52" data-spot-w="24"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-2.png" alt="Штамп/печать"></div></div>
-      <div class="mockup" data-spot-x="50" data-spot-y="50" data-spot-w="18"><div class="mockup-card"><img src="assets/image-25-07-26-08-34.png" alt="Бумажная продукция небольшие тиражи"></div></div>
-      <div class="mockup" data-spot-x="40" data-spot-y="50" data-spot-w="14"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-5.png" alt="Тишью/калька/крафт"></div></div>
-      <div class="mockup" data-spot-x="50" data-spot-y="55" data-spot-w="24"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-7.png" alt="Полиэтиленовые брендированные пакеты"></div></div>
-      <div class="mockup" data-spot-x="50" data-spot-y="50" data-spot-w="18"><div class="mockup-card"><img src="assets/image-25-07-26-08-34.png" alt="Бумажная продукция большие тиражи"></div></div>
-      <div class="mockup" data-spot-x="50" data-spot-y="50" data-spot-w="24"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-11.png" alt="Брендированные шоколадки"></div></div>
+      <div class="mockup" data-slug="bag" data-spot-x="48" data-spot-y="54" data-spot-w="32"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-12.png" alt="Картонные брендированные пакеты"></div></div>
+      <div class="mockup" data-slug="ribbon" data-spot-x="50" data-spot-y="57" data-spot-w="15"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-13.png" alt="Брендированная лента"></div></div>
+      <div class="mockup" data-slug="box" data-spot-x="50" data-spot-y="58" data-spot-w="28"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-1.png" alt="Брендированные коробки"></div></div>
+      <div class="mockup" data-slug="tag" data-spot-x="50" data-spot-y="60" data-spot-w="26"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-4.png" alt="Подвесные картонные бирки"></div></div>
+      <div class="mockup" data-slug="patch" data-spot-x="50" data-spot-y="48" data-spot-w="13"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-9.png" alt="Пришивные бирки"></div></div>
+      <div class="mockup" data-slug="stickers" data-spot-x="50" data-spot-y="48" data-spot-w="26"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-8.png" alt="Наклейки"></div></div>
+      <div class="mockup" data-slug="souvenir" data-spot-x="50" data-spot-y="44" data-spot-w="17"><div class="mockup-card"><img src="assets/image-25-07-26-08-34-1.png" alt="Корпоративная сувенирная продукция"></div></div>
+      <div class="mockup" data-slug="stamp" data-spot-x="38" data-spot-y="52" data-spot-w="24"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-2.png" alt="Штамп/печать"></div></div>
+      <div class="mockup" data-slug="paper-small" data-spot-x="50" data-spot-y="50" data-spot-w="18"><div class="mockup-card"><img src="assets/image-25-07-26-08-34.png" alt="Бумажная продукция небольшие тиражи"></div></div>
+      <div class="mockup" data-slug="tissue" data-spot-x="40" data-spot-y="50" data-spot-w="14"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-5.png" alt="Тишью/калька/крафт"></div></div>
+      <div class="mockup" data-slug="plastic-bag" data-spot-x="50" data-spot-y="55" data-spot-w="24"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-7.png" alt="Полиэтиленовые брендированные пакеты"></div></div>
+      <div class="mockup" data-slug="paper-large" data-spot-x="50" data-spot-y="50" data-spot-w="18"><div class="mockup-card"><img src="assets/image-25-07-26-08-34.png" alt="Бумажная продукция большие тиражи"></div></div>
+      <div class="mockup" data-slug="chocolate" data-spot-x="50" data-spot-y="50" data-spot-w="24"><div class="mockup-card"><img src="assets/image-25-07-26-04-31-11.png" alt="Брендированные шоколадки"></div></div>
     </div>
 
     <div id="logoLayer" aria-hidden="true">
@@ -159,7 +187,13 @@
   </div>
 
   <div class="meta-bar">
-    <span class="caption" id="caption">Пакет с верёвочными ручками</span>
+    <span class="eyebrow-label">Рассчитать стоимость</span>
+    <a class="caption" id="caption" href="category.html#bag">
+      <span class="caption-text">Пакет с верёвочными ручками</span>
+      <span class="caption-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </span>
+    </a>
     <div class="dots" id="dots" role="tablist" aria-label="Выбор изделия"></div>
   </div>
 </section>
@@ -173,12 +207,14 @@
   var mockupEls = Array.prototype.slice.call(track.querySelectorAll('.mockup'));
   var dotsWrap = document.getElementById('dots');
   var captionEl = document.getElementById('caption');
+  var captionTextEl = captionEl.querySelector('.caption-text');
   var prevBtn = document.querySelector('.arrow.prev');
   var nextBtn = document.querySelector('.arrow.next');
   var N = mockupEls.length;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var NAMES = mockupEls.map(function(el){ return el.querySelector('img').getAttribute('alt'); });
+  var SLUGS = mockupEls.map(function(el){ return el.getAttribute('data-slug') || ''; });
 
   NAMES.forEach(function(name, i){
     var b = document.createElement('button');
@@ -248,7 +284,8 @@
   }
 
   function updateMeta(){
-    captionEl.textContent = NAMES[active];
+    captionTextEl.textContent = NAMES[active];
+    captionEl.setAttribute('href', 'category.html#' + SLUGS[active]);
     dotEls.forEach(function(d, i){ d.classList.toggle('is-active', i === active); });
   }
 
