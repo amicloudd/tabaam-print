@@ -7,6 +7,7 @@
     --line-strong:#B7A98C;
     --gold-2:#9C7423;
     --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-serif:Georgia,"Iowan Old Style","Times New Roman",serif;
   }
   @media (prefers-color-scheme: dark){
     :root{ --bg:#15120E; --card:#221C15; --ink:#F1EAD9; --ink-soft:#B4A891; --line-strong:#4B4536; --gold-2:#C79A44; }
@@ -16,7 +17,61 @@
 
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100%;}
+  html{scroll-behavior:smooth;}
   body{background:var(--bg);}
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+
+  #siteHeader{
+    position:sticky; top:0; z-index:1000;
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    padding:14px clamp(20px,5vw,40px);
+    background:var(--bg);
+    border-bottom:1px solid var(--line-strong);
+  }
+  .site-logo{ display:flex; align-items:center; flex:none; }
+  .site-logo img{ height:34px; width:auto; display:block; }
+  .site-nav{ display:flex; gap:clamp(18px,3vw,32px); list-style:none; margin:0; padding:0; }
+  .site-nav a{
+    font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--ink-soft); text-decoration:none; transition:color .2s ease;
+  }
+  .site-nav a:hover, .site-nav a:focus-visible{ color:var(--ink); }
+  .site-phone{ flex:none; font-size:12.5px; color:var(--ink-soft); letter-spacing:.02em; white-space:nowrap; }
+  .site-phone a{ color:inherit; text-decoration:none; }
+  .site-phone a:hover{ color:var(--ink); }
+  @media (max-width:640px){
+    .site-nav{ display:none; }
+  }
+
+  #siteFooter{
+    position:relative;
+    background:var(--card);
+    padding:clamp(48px,7vw,72px) clamp(20px,5vw,40px) clamp(24px,4vw,32px);
+    border-top:1px solid var(--line-strong);
+  }
+  .footer-inner{
+    max-width:980px; margin:0 auto;
+    display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:clamp(28px,5vw,48px);
+  }
+  @media (max-width:700px){ .footer-inner{ grid-template-columns:1fr; } }
+  .footer-brand img{ height:28px; width:auto; display:block; margin-bottom:14px; }
+  .footer-brand p{ font-size:13px; line-height:1.6; color:var(--ink-soft); max-width:34ch; margin:0; }
+  .footer-heading{
+    display:block; font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--ink-soft); margin-bottom:14px;
+  }
+  .footer-col{ display:flex; flex-direction:column; gap:9px; }
+  .footer-col a{ font-size:13px; color:var(--ink); text-decoration:none; transition:color .2s ease; }
+  .footer-col a:hover{ color:var(--gold-2); }
+  .footer-name{ font-size:13px; color:var(--ink); }
+  .footer-bottom{
+    max-width:980px; margin:clamp(32px,5vw,48px) auto 0;
+    padding-top:20px; border-top:1px solid var(--line-strong);
+    font-size:11.5px; color:var(--ink-soft);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+
+  #hero, #about, #design{ scroll-margin-top:76px; }
 
   #hero{
     position:relative;
@@ -140,13 +195,118 @@
     .arrow{ width:38px; height:38px; }
   }
 
+  /* ---- content sections below the hero ---- */
+  .content-section{
+    position:relative;
+    background:var(--bg);
+    padding:clamp(64px,10vw,120px) clamp(20px,5vw,40px);
+  }
+  .content-section--card{ background:var(--card); }
+  .content-section--textured{ position:relative; overflow:hidden; }
+  .content-section--textured::before{
+    content:""; position:absolute; inset:0;
+    background-image:url("__BG_DESIGN__");
+    background-size:cover; background-position:center;
+    opacity:.5;
+  }
+  @media (prefers-color-scheme: dark){ .content-section--textured::before{ opacity:.14; mix-blend-mode:screen; } }
+  :root[data-theme="dark"] .content-section--textured::before{ opacity:.14; mix-blend-mode:screen; }
+  :root[data-theme="light"] .content-section--textured::before{ opacity:.5; mix-blend-mode:normal; }
+  .content-section--textured .content-inner{ position:relative; z-index:1; }
+  .content-inner{ max-width:980px; margin:0 auto; }
+  .content-inner--narrow{ max-width:640px; margin-left:auto; margin-right:auto; text-align:center; }
+
+  .eyebrow{
+    display:block; font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--ink-soft); margin:0 0 14px;
+  }
+  .section-head{ margin-bottom:clamp(36px,6vw,60px); }
+  .section-title{
+    font-family:var(--font-serif); font-weight:700;
+    font-size:clamp(26px,3.6vw,40px); line-height:1.15; letter-spacing:-.01em;
+    color:var(--ink); margin:0; text-wrap:balance;
+  }
+
+  .about-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(28px,5vw,64px); }
+  @media (max-width:760px){ .about-grid{ grid-template-columns:1fr; } }
+  .about-block:nth-child(2){ transition-delay:.08s; }
+  .about-block h3{
+    font-family:var(--font-serif); font-weight:700;
+    font-size:clamp(17px,1.9vw,20px); line-height:1.35;
+    color:var(--ink); margin:0 0 14px; text-wrap:balance;
+  }
+  .about-block p{ font-size:14.5px; line-height:1.7; color:var(--ink-soft); margin:0; max-width:52ch; }
+
+  .section-lede{ font-size:15.5px; line-height:1.75; color:var(--ink-soft); margin:18px auto 34px; max-width:56ch; }
+
+  .stats-row{
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:clamp(20px,4vw,32px);
+    margin-top:clamp(40px,6vw,64px);
+    padding-top:clamp(32px,5vw,44px);
+    border-top:1px solid var(--line-strong);
+  }
+  @media (max-width:760px){ .stats-row{ grid-template-columns:repeat(2,1fr); } }
+  .stat-head{
+    font-family:var(--font-serif); font-weight:700;
+    font-size:clamp(16px,1.9vw,19px); color:var(--ink); margin:0 0 6px; text-wrap:balance;
+  }
+  .stat-sub{ font-size:12.5px; line-height:1.55; color:var(--ink-soft); margin:0; }
+
+  .section-cta{ margin-top:clamp(32px,5vw,44px); text-align:center; }
+  .text-link{
+    display:inline-flex; align-items:center; gap:7px;
+    font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink); text-decoration:none;
+  }
+  .text-link .link-text{
+    background-image:linear-gradient(var(--ink),var(--ink));
+    background-repeat:no-repeat; background-position:0 100%; background-size:0% 1px;
+    transition:background-size .3s ease; padding-bottom:2px;
+  }
+  .text-link .link-arrow{
+    display:inline-flex; width:14px; height:14px; color:var(--gold-2);
+    transition:transform .3s cubic-bezier(.22,.61,.36,1);
+  }
+  .text-link:hover .link-text{ background-size:100% 1px; }
+  .text-link:hover .link-arrow{ transform:translateX(4px); }
+  .text-link:focus-visible{ outline:2px solid var(--gold-2); outline-offset:4px; border-radius:2px; }
+
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:9px;
+    background:var(--ink); color:var(--bg);
+    font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;
+    padding:14px 24px; border-radius:8px; text-decoration:none;
+    transition:background-color .25s ease;
+  }
+  .btn-primary:hover{ background:var(--gold-2); }
+  .btn-primary:focus-visible{ outline:2px solid var(--gold-2); outline-offset:3px; }
+  .btn-primary .btn-arrow{ display:inline-flex; width:14px; height:14px; transition:transform .3s cubic-bezier(.22,.61,.36,1); }
+  .btn-primary:hover .btn-arrow{ transform:translateX(4px); }
+
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s cubic-bezier(.22,.61,.36,1); }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+
   @media (prefers-reduced-motion: reduce){
     #mockups, .mockup, #logoLayer, .caption, .caption-text, .caption-arrow, .eyebrow-label, .dots, .arrow{
       transition-duration:.001s !important;
       transition-delay:0s !important;
     }
+    .reveal{ transition-duration:.001s !important; transform:none !important; }
   }
 </style>
+
+<header id="siteHeader">
+  <a class="site-logo" href="#hero" aria-label="tabaam.print — на главную">
+    <img src="__LOGO__" alt="tabaam.print">
+  </a>
+  <nav class="site-nav" aria-label="Основная навигация">
+    <a href="#hero">Каталог</a>
+    <a href="#about">О нас</a>
+    <a href="#design">Дизайн</a>
+  </nav>
+  <span class="site-phone"><a href="tel:+79282699936">+7 928 269-99-36</a></span>
+</header>
 
 <section id="hero" aria-label="Витрина бренда tabaam.print">
   <div id="stage">
@@ -159,11 +319,12 @@
       <div class="mockup" data-slug="stickers" data-spot-x="50" data-spot-y="48" data-spot-w="26"><div class="mockup-card"><img src="__IMG_WRAP__" alt="Наклейки"></div></div>
       <div class="mockup" data-slug="souvenir" data-spot-x="50" data-spot-y="44" data-spot-w="17"><div class="mockup-card"><img src="__IMG_SOUVENIR__" alt="Корпоративная сувенирная продукция"></div></div>
       <div class="mockup" data-slug="stamp" data-spot-x="38" data-spot-y="52" data-spot-w="24"><div class="mockup-card"><img src="__IMG_STAMP__" alt="Штамп/печать"></div></div>
-      <div class="mockup" data-slug="paper-small" data-spot-x="50" data-spot-y="50" data-spot-w="18"><div class="mockup-card"><img src="__IMG_PAPER_SMALL__" alt="Бумажная продукция небольшие тиражи"></div></div>
+      <div class="mockup" data-slug="paper-small" data-spot-x="50" data-spot-y="50" data-spot-w="18"><div class="mockup-card"><img src="__IMG_PAPER_SMALL__" alt="Бумажная продукция малые тиражи"></div></div>
       <div class="mockup" data-slug="tissue" data-spot-x="40" data-spot-y="50" data-spot-w="14"><div class="mockup-card"><img src="__IMG_ROLL__" alt="Тишью/калька/крафт"></div></div>
       <div class="mockup" data-slug="plastic-bag" data-spot-x="50" data-spot-y="55" data-spot-w="24"><div class="mockup-card"><img src="__IMG_PLASTICBAG__" alt="Полиэтиленовые брендированные пакеты"></div></div>
       <div class="mockup" data-slug="paper-large" data-spot-x="50" data-spot-y="50" data-spot-w="18"><div class="mockup-card"><img src="__IMG_PAPER_LARGE__" alt="Бумажная продукция большие тиражи"></div></div>
       <div class="mockup" data-slug="chocolate" data-spot-x="50" data-spot-y="50" data-spot-w="24"><div class="mockup-card"><img src="__IMG_CHOCO__" alt="Брендированные шоколадки"></div></div>
+      <div class="mockup" data-slug="sign" data-spot-x="50" data-spot-y="50" data-spot-w="34"><div class="mockup-card"><img src="__IMG_SIGN__" alt="Вывески и баннеры"></div></div>
     </div>
 
     <div id="logoLayer" aria-hidden="true">
@@ -189,6 +350,112 @@
     <div class="dots" id="dots" role="tablist" aria-label="Выбор изделия"></div>
   </div>
 </section>
+
+<section id="about" class="content-section">
+  <div class="content-inner">
+    <div class="section-head reveal">
+      <span class="eyebrow">О нас</span>
+      <h2 class="section-title">Типография полного цикла</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-block reveal">
+        <h3>Бренд начинается с деталей</h3>
+        <p>Мы верим, что именно детали формируют первое впечатление о компании. Фирменная упаковка, ленты, наклейки, полиграфия и сувенирная продукция помогают бренду выглядеть профессионально и запоминаться с первого взгляда.</p>
+      </div>
+      <div class="about-block reveal">
+        <h3>Мы объединяем дизайн и производство, чтобы вы могли получить всё в одном месте</h3>
+        <p>— от идеи и разработки фирменного стиля до готовой продукции. Внимательно относимся к каждому проекту, подбираем материалы, контролируем качество и создаём решения, которыми действительно хочется пользоваться.</p>
+      </div>
+    </div>
+
+    <div class="stats-row reveal">
+      <div class="stat-item">
+        <p class="stat-head">С 2023 года</p>
+        <p class="stat-sub">на рынке полиграфии и сувенирной продукции</p>
+      </div>
+      <div class="stat-item">
+        <p class="stat-head">Сотни заказов</p>
+        <p class="stat-sub">и клиенты, которые возвращаются снова</p>
+      </div>
+      <div class="stat-item">
+        <p class="stat-head">Индивидуальный подход</p>
+        <p class="stat-sub">к каждому проекту — без шаблонных решений</p>
+      </div>
+      <div class="stat-item">
+        <p class="stat-head">Полный контроль</p>
+        <p class="stat-sub">от заказа до доставки, всегда на связи</p>
+      </div>
+    </div>
+
+    <div class="section-cta reveal">
+      <a class="text-link" href="#hero">
+        <span class="link-text">Смотреть каталог продукции</span>
+        <span class="link-arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="design" class="content-section content-section--card content-section--textured">
+  <div class="content-inner content-inner--narrow reveal">
+    <h2 class="section-title">Дизайн, который делает бренд узнаваемым</h2>
+    <p class="section-lede">Каждый проект начинается с идеи. Мы создаём логотипы, фирменный стиль, упаковку и полиграфию, чтобы ваша компания выглядела профессионально и запоминалась с первого взгляда. Все макеты сразу подготавливаются к производству.</p>
+    <a class="btn-primary" href="designer-portfolio.html">
+      <span>Портфолио дизайнера</span>
+      <span class="btn-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </span>
+    </a>
+  </div>
+</section>
+
+<footer id="siteFooter">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="__LOGO__" alt="tabaam.print">
+      <p>Полиграфия и сувенирная продукция полного цикла — от макета до готового изделия.</p>
+    </div>
+    <div class="footer-col">
+      <span class="footer-heading">Каталог</span>
+      <a href="#hero">Все категории</a>
+      <a href="#about">О нас</a>
+      <a href="#design">Дизайн</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-heading">Контакты</span>
+      <span class="footer-name">Амина Ахматханова</span>
+      <a href="tel:+79282699936">+7 928 269-99-36</a>
+      <a href="mailto:enigma00_00@mail.ru">enigma00_00@mail.ru</a>
+      <a href="https://instagram.com/tabaam.print" target="_blank" rel="noopener noreferrer">Instagram · @tabaam.print</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 tabaam.print</span>
+    <span>Полиграфия и сувенирная продукция</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if (!els.length) return;
+  if (!('IntersectionObserver' in window)){
+    els.forEach(function(el){ el.classList.add('is-visible'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+  els.forEach(function(el){ io.observe(el); });
+})();
+</script>
 
 <script>
 (function(){

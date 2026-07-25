@@ -57,6 +57,8 @@ mapping = {
     "__IMG_PLASTICBAG__": jpeg_data_uri("image-25-07-26-04-31-7.png"),
     "__IMG_PAPER_LARGE__": _paper_uri,
     "__IMG_CHOCO__": jpeg_data_uri("image-25-07-26-04-31-11.png"),
+    "__IMG_SIGN__": jpeg_data_uri("2608F680-9E3E-4B5F-B77D-B0F15A550930.PNG"),
+    "__BG_DESIGN__": jpeg_data_uri("5BE5C914-8811-4318-BE8F-98CBE0A01E3B.PNG", max_dim=1400, quality=82),
 }
 
 with open(TEMPLATE, "r", encoding="utf-8") as f:

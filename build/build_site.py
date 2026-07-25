@@ -23,6 +23,8 @@ mapping = {
     "__IMG_PLASTICBAG__": rel("image-25-07-26-04-31-7.png"),
     "__IMG_PAPER_LARGE__": rel("image-25-07-26-08-34.png"),
     "__IMG_CHOCO__": rel("image-25-07-26-04-31-11.png"),
+    "__IMG_SIGN__": rel("2608F680-9E3E-4B5F-B77D-B0F15A550930.PNG"),
+    "__BG_DESIGN__": rel("5BE5C914-8811-4318-BE8F-98CBE0A01E3B.PNG"),
 }
 
 with open(TEMPLATE, "r", encoding="utf-8") as f:
