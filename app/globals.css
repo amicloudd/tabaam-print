@@ -79,11 +79,12 @@ body{background:var(--bg);font-family:var(--font-sans);color:var(--ink);}
   overflow:hidden;
   display:flex;
   flex-direction:column;
+  justify-content:center;
   font-family:var(--font-sans);
   color:var(--ink);
 }
 
-#stage{ position:relative; flex:1; min-height:0; touch-action:pan-y; }
+#stage{ position:relative; flex:none; height:min(58vh,600px); min-height:380px; touch-action:pan-y; }
 #mockups{
   position:absolute; inset:0;
   opacity:0; transform:scale(.965);

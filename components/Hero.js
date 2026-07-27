@@ -135,6 +135,7 @@ export default function Hero() {
   }, [layout, logoTargetFor, setLogoTransform, spacing, goTo]);
 
   const handlePointerDown = useCallback((e) => {
+    if (e.target.closest(".arrow")) return; // let the arrow buttons handle their own click, no drag capture
     const st = stateRef.current;
     if (st.isAnimating) return;
     st.dragging = true;
