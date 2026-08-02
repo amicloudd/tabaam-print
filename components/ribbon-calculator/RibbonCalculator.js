@@ -157,8 +157,8 @@ export default function RibbonCalculator({ ribbons }) {
 
           {hasArtwork === false && (
             <div className="rc-note rc-note--fade rc-note--fee">
-              <p>Стоимость дизайна начинается с 400 ₽.</p>
-              <p className="rc-fee-line">Дизайн макета — 400 ₽</p>
+              <p>Стоимость разработки дизайна</p>
+              <p className="rc-fee-line">+400 ₽</p>
             </div>
           )}
         </div>
