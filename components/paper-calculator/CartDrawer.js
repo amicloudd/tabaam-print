@@ -32,6 +32,10 @@ export default function CartDrawer({ open, onClose, order, whatsappUrl }) {
         <div className="cart-panel-body">
           <dl className="cart-fact-list">
             <div className="cart-fact">
+              <dt>Тираж</dt>
+              <dd>{order.divisionLabel}</dd>
+            </div>
+            <div className="cart-fact">
               <dt>Вид продукции</dt>
               <dd>{order.productLabel}</dd>
             </div>
@@ -39,14 +43,18 @@ export default function CartDrawer({ open, onClose, order, whatsappUrl }) {
               <dt>Размер</dt>
               <dd>{order.sizeLabel}</dd>
             </div>
-            <div className="cart-fact">
-              <dt>Тип печати</dt>
-              <dd>{order.printLabel}</dd>
-            </div>
-            <div className="cart-fact">
-              <dt>Количество</dt>
-              <dd>{order.qty} шт</dd>
-            </div>
+            {order.printLabel && (
+              <div className="cart-fact">
+                <dt>Тип печати</dt>
+                <dd>{order.printLabel}</dd>
+              </div>
+            )}
+            {order.qty !== null && (
+              <div className="cart-fact">
+                <dt>Количество</dt>
+                <dd>{order.qty} шт</dd>
+              </div>
+            )}
             <div className="cart-fact">
               <dt>Нужен дизайн</dt>
               <dd>{order.hasArtwork ? "Нет, макет готов" : `Да (+${order.designFee} ₽)`}</dd>

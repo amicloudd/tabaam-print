@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { formatRub } from "@/lib/format";
 
 export default function CartDrawer({ open, onClose, order, whatsappUrl }) {
   const panelRef = useRef(null);
@@ -33,22 +32,29 @@ export default function CartDrawer({ open, onClose, order, whatsappUrl }) {
           <dl className="cart-fact-list">
             <div className="cart-fact">
               <dt>Вид продукции</dt>
-              <dd>{order.productLabel}</dd>
+              <dd>{order.categoryLabel}</dd>
             </div>
+            {order.facts.map((f) => (
+              <div className="cart-fact" key={f.label}>
+                <dt>{f.label}</dt>
+                <dd>{f.value}</dd>
+              </div>
+            ))}
             <div className="cart-fact">
-              <dt>Размер</dt>
-              <dd>{order.sizeLabel}</dd>
+              <dt>Количество</dt>
+              <dd>{order.qty} шт</dd>
             </div>
             <div className="cart-fact">
               <dt>Нужен дизайн</dt>
-              <dd>{order.hasArtwork ? "Нет, макет готов" : `Да (+${order.designFee} ₽)`}</dd>
+              <dd>{order.hasArtwork ? "Нет, макет готов" : "Да (стоимость уточняется)"}</dd>
             </div>
           </dl>
 
           <div className="cart-total-row">
-            <span>Итоговая стоимость</span>
-            <span>{formatRub(order.grandTotal)}</span>
+            <span>Стоимость</span>
+            <span>Уточняется</span>
           </div>
+          <p className="tag-shipping-note">Стоимость зависит от размера, материала и сложности макета — рассчитаем индивидуально.</p>
 
           <a className="btn-primary cart-whatsapp" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
             <span>Отправить заказ в WhatsApp</span>

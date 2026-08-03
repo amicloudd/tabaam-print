@@ -15,6 +15,7 @@ import {
   NO_BACKING_MIN_QTY,
   NO_BACKING_DEFAULT,
   noBackingTotal,
+  WORK_HOURS_STICKER_PRICE,
 } from "@/lib/sticker-pricing";
 import { formatRub } from "@/lib/format";
 import "@/components/ribbon-calculator/ribbon-calculator.css";
@@ -26,6 +27,11 @@ const STICKER_TYPES = [
   { id: "color", label: "Цветная печать" },
   { id: "film", label: "Печать на прозрачной плёнке" },
   { id: "no-backing", label: "Наклейки без подложки (зеркальный перенос)" },
+];
+
+const NB_MODES = [
+  { id: "custom", label: "Свой размер" },
+  { id: "hours", label: `Наклейка «Режим работы» — ${WORK_HOURS_STICKER_PRICE} ₽` },
 ];
 
 export default function StickerCalculator() {
@@ -45,9 +51,11 @@ export default function StickerCalculator() {
   const [filmQty, setFilmQty] = useState(100);
 
   // без подложки
+  const [nbMode, setNbMode] = useState(null);
   const [nbW, setNbW] = useState(NO_BACKING_DEFAULT.wCm);
   const [nbH, setNbH] = useState(NO_BACKING_DEFAULT.hCm);
   const [nbQty, setNbQty] = useState(NO_BACKING_MIN_QTY);
+  const [hoursQty, setHoursQty] = useState(1);
 
   const typeLabel = STICKER_TYPES.find((t) => t.id === stickerType)?.label || "—";
 
@@ -75,9 +83,13 @@ export default function StickerCalculator() {
   const filmTotal = filmSize ? filmLineTotal(filmQty, filmSize.price) : 0;
   const canSubmitFilm = hasArtwork !== null && filmColorId !== null && filmSizeId !== null && filmQty > 0;
 
-  // ---- без подложки ----
+  // ---- без подложки: свой размер ----
   const nbTotal = noBackingTotal(nbQty);
   const canSubmitNb = hasArtwork !== null && nbW > 0 && nbH > 0 && nbQty >= NO_BACKING_MIN_QTY;
+
+  // ---- без подложки: режим работы ----
+  const hoursTotal = hoursQty > 0 ? hoursQty * WORK_HOURS_STICKER_PRICE : 0;
+  const canSubmitHours = hasArtwork !== null && hoursQty > 0;
 
   function buildOrder(kind) {
     if (kind === "color") {
@@ -108,7 +120,17 @@ export default function StickerCalculator() {
         grandTotal: filmTotal,
       };
     }
-    // no-backing
+    if (kind === "no-backing-hours") {
+      return {
+        typeLabel,
+        facts: [{ label: "Наклейка", value: "Режим работы" }],
+        qty: hoursQty,
+        hasArtwork,
+        isEstimate: false,
+        grandTotal: hoursTotal,
+      };
+    }
+    // no-backing (свой размер)
     return {
       typeLabel,
       facts: [{ label: "Размер", value: `${nbW} × ${nbH} см` }],
@@ -137,6 +159,8 @@ export default function StickerCalculator() {
     nbH,
     nbTotal,
     nbQty,
+    hoursQty,
+    hoursTotal,
     hasArtwork,
   ]);
 
@@ -354,57 +378,103 @@ export default function StickerCalculator() {
         {stickerType === "no-backing" && (
           <>
             <div className="rc-step">
-              <span className="rc-step-title">Размер</span>
-              <div className="tag-custom-inputs">
-                <label className="tag-input-field">
-                  <span>Ширина, см</span>
-                  <input type="number" min={1} step={0.5} value={nbW} onChange={(e) => setNbW(Number(e.target.value))} />
-                </label>
-                <label className="tag-input-field">
-                  <span>Высота, см</span>
-                  <input type="number" min={1} step={0.5} value={nbH} onChange={(e) => setNbH(Number(e.target.value))} />
-                </label>
+              <span className="rc-step-title">Вариант</span>
+              <div className="rc-choice-row">
+                {NB_MODES.map((m) => (
+                  <button key={m.id} type="button" className={"rc-choice" + (nbMode === m.id ? " is-active" : "")} onClick={() => setNbMode(m.id)}>
+                    {m.label}
+                  </button>
+                ))}
               </div>
-              <p className="rc-hint">
-                Стандарт: {NO_BACKING_DEFAULT.wCm} × {NO_BACKING_DEFAULT.hCm} см · ориентировочная стоимость {NO_BACKING_PRICE} ₽/шт · минимальный заказ {NO_BACKING_MIN_QTY} шт
-              </p>
             </div>
 
-            <div className="rc-step">
-              <span className="rc-step-title">Количество</span>
-              <div className="rc-slider-block">
-                <div className="rc-slider-row">
-                  <input type="range" min={NO_BACKING_MIN_QTY} max={500} step={10} value={nbQty} onChange={(e) => setNbQty(Number(e.target.value))} />
-                  <span className="rc-slider-value">{nbQty} шт</span>
+            {nbMode === "custom" && (
+              <>
+                <div className="rc-step">
+                  <span className="rc-step-title">Размер</span>
+                  <div className="tag-custom-inputs">
+                    <label className="tag-input-field">
+                      <span>Ширина, см</span>
+                      <input type="number" min={1} step={0.5} value={nbW} onChange={(e) => setNbW(Number(e.target.value))} />
+                    </label>
+                    <label className="tag-input-field">
+                      <span>Высота, см</span>
+                      <input type="number" min={1} step={0.5} value={nbH} onChange={(e) => setNbH(Number(e.target.value))} />
+                    </label>
+                  </div>
+                  <p className="rc-hint">
+                    Стандарт: {NO_BACKING_DEFAULT.wCm} × {NO_BACKING_DEFAULT.hCm} см · ориентировочная стоимость {NO_BACKING_PRICE} ₽/шт · минимальный заказ {NO_BACKING_MIN_QTY} шт
+                  </p>
                 </div>
-                <div className="rc-order-item">
-                  <span>{nbQty} шт × {NO_BACKING_PRICE} ₽ (ориентировочно)</span>
-                  <span className="rc-order-price">{formatRub(nbTotal)}</span>
+
+                <div className="rc-step">
+                  <span className="rc-step-title">Количество</span>
+                  <div className="rc-slider-block">
+                    <div className="rc-slider-row">
+                      <input type="range" min={NO_BACKING_MIN_QTY} max={500} step={10} value={nbQty} onChange={(e) => setNbQty(Number(e.target.value))} />
+                      <span className="rc-slider-value">{nbQty} шт</span>
+                    </div>
+                    <div className="rc-order-item">
+                      <span>{nbQty} шт × {NO_BACKING_PRICE} ₽ (ориентировочно)</span>
+                      <span className="rc-order-price">{formatRub(nbTotal)}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="tag-shipping-note">
-              Итоговая стоимость зависит от сложности макета и подтверждается после проверки. Макет должен быть максимально
-              простым: чёрный контур, белый фон, без мелких и сложных элементов.
-            </div>
+                <div className="tag-shipping-note">
+                  Итоговая стоимость зависит от сложности макета и подтверждается после проверки. Макет должен быть максимально
+                  простым: чёрный контур, белый фон, без мелких и сложных элементов.
+                </div>
 
-            <div className="rc-summary">
-              <span className="rc-step-title">Итог заказа</span>
-              <div className="rc-total-row">
-                <span>Ориентировочная стоимость</span>
-                <span className="rc-total-value">{formatRub(nbTotal)}</span>
-              </div>
-              <button type="button" className="btn-primary rc-submit" disabled={!canSubmitNb} onClick={() => openCart("no-backing")}>
-                <span>Добавить в корзину</span>
-                <span className="btn-arrow" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M13 6l6 6-6 6" />
-                  </svg>
-                </span>
-              </button>
-              {!canSubmitNb && <p className="rc-hint rc-hint--center">Ответьте про макет и укажите размер (минимум {NO_BACKING_MIN_QTY} шт).</p>}
-            </div>
+                <div className="rc-summary">
+                  <span className="rc-step-title">Итог заказа</span>
+                  <div className="rc-total-row">
+                    <span>Ориентировочная стоимость</span>
+                    <span className="rc-total-value">{formatRub(nbTotal)}</span>
+                  </div>
+                  <button type="button" className="btn-primary rc-submit" disabled={!canSubmitNb} onClick={() => openCart("no-backing")}>
+                    <span>Добавить в корзину</span>
+                    <span className="btn-arrow" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                      </svg>
+                    </span>
+                  </button>
+                  {!canSubmitNb && <p className="rc-hint rc-hint--center">Ответьте про макет и укажите размер (минимум {NO_BACKING_MIN_QTY} шт).</p>}
+                </div>
+              </>
+            )}
+
+            {nbMode === "hours" && (
+              <>
+                <div className="rc-step">
+                  <span className="rc-step-title">Количество</span>
+                  <div className="tag-custom-inputs">
+                    <label className="tag-input-field">
+                      <span>Штук</span>
+                      <input type="number" min={1} value={hoursQty} onChange={(e) => setHoursQty(Number(e.target.value))} />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="rc-summary">
+                  <span className="rc-step-title">Итог заказа</span>
+                  <div className="rc-total-row">
+                    <span>Итоговая стоимость</span>
+                    <span className="rc-total-value">{formatRub(hoursTotal)}</span>
+                  </div>
+                  <button type="button" className="btn-primary rc-submit" disabled={!canSubmitHours} onClick={() => openCart("no-backing-hours")}>
+                    <span>Добавить в корзину</span>
+                    <span className="btn-arrow" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                      </svg>
+                    </span>
+                  </button>
+                  {!canSubmitHours && <p className="rc-hint rc-hint--center">Ответьте про макет и укажите количество.</p>}
+                </div>
+              </>
+            )}
           </>
         )}
       </div>
