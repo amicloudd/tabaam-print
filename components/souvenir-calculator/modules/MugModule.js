@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const MIN_QTY = 10;
+import { MUG_MIN_QTY, MUG_PRICE } from "@/lib/souvenir-pricing";
 
 export default function MugModule({ onOrderChange }) {
-  const [qty, setQty] = useState(MIN_QTY);
-  const canSubmit = qty >= MIN_QTY;
+  const [qty, setQty] = useState(MUG_MIN_QTY);
+  const canSubmit = qty >= MUG_MIN_QTY;
 
   useEffect(() => {
     if (!canSubmit) {
@@ -15,9 +14,9 @@ export default function MugModule({ onOrderChange }) {
     }
     onOrderChange({
       qty,
-      facts: [{ label: "Цена", value: "уточняется" }],
-      total: null,
-      isEstimate: true,
+      facts: [{ label: "Цена", value: `${MUG_PRICE} ₽/шт` }],
+      total: MUG_PRICE * qty,
+      isEstimate: false,
       canSubmit: true,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -27,10 +26,10 @@ export default function MugModule({ onOrderChange }) {
     <div className="rc-step">
       <span className="rc-step-title">Количество</span>
       <label className="souv-field">
-        <span>Штук (минимум {MIN_QTY})</span>
-        <input type="number" min={MIN_QTY} value={qty} onChange={(e) => setQty(Number(e.target.value))} />
+        <span>Штук (минимум {MUG_MIN_QTY})</span>
+        <input type="number" min={MUG_MIN_QTY} value={qty} onChange={(e) => setQty(Number(e.target.value))} />
       </label>
-      <p className="rc-hint">Цена появится позже.</p>
+      <p className="rc-hint">{qty} шт × {MUG_PRICE} ₽ = {MUG_PRICE * qty} ₽</p>
     </div>
   );
 }

@@ -1,6 +1,10 @@
 import TshirtModule from "./modules/TshirtModule";
 import MugModule from "./modules/MugModule";
 import PenModule from "./modules/PenModule";
+import CapModule from "./modules/CapModule";
+import BadgeModule from "./modules/BadgeModule";
+import PlasticCardModule from "./modules/PlasticCardModule";
+import ChocolateModule from "./modules/ChocolateModule";
 import CatalogModule from "./modules/CatalogModule";
 
 /**
@@ -30,7 +34,9 @@ export const SOUVENIR_MODULES = [
   { id: "tshirt", label: "Футболки", Component: TshirtModule },
   { id: "mug", label: "Кружки", Component: MugModule },
   { id: "pen", label: "Ручки", Component: PenModule },
+  { id: "cap", label: "Кепки", Component: CapModule },
   { id: "notebook-catalog", label: "Блокноты и каталоги", Component: CatalogModule },
-  { id: "badge", label: "Бейджики", Component: CatalogModule },
-  { id: "plastic-card", label: "Пластиковые карты", Component: CatalogModule },
+  { id: "badge", label: "Бейджики", Component: BadgeModule },
+  { id: "plastic-card", label: "Пластиковые карты", Component: PlasticCardModule },
+  { id: "chocolate", label: "Шоколадки", Component: ChocolateModule },
 ];

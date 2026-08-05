@@ -1,18 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const METHODS = [
-  { id: "print", label: "Печать" },
-  { id: "engrave", label: "Гравировка" },
-];
+import { PEN_TIERS, penUnitPrice } from "@/lib/souvenir-pricing";
 
 export default function PenModule({ onOrderChange }) {
-  const [methodId, setMethodId] = useState(null);
   const [qty, setQty] = useState(1);
-
-  const method = METHODS.find((m) => m.id === methodId);
-  const canSubmit = !!method && qty > 0;
+  const canSubmit = qty > 0;
+  const unitPrice = penUnitPrice(qty);
 
   useEffect(() => {
     if (!canSubmit) {
@@ -21,38 +15,24 @@ export default function PenModule({ onOrderChange }) {
     }
     onOrderChange({
       qty,
-      facts: [
-        { label: "Способ нанесения", value: method.label },
-        { label: "Минимальный заказ", value: "уточняется" },
-      ],
-      total: null,
-      isEstimate: true,
+      facts: [{ label: "Цена", value: `${unitPrice} ₽/шт` }],
+      total: unitPrice * qty,
+      isEstimate: false,
       canSubmit: true,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [methodId, qty]);
+  }, [qty]);
 
   return (
-    <>
-      <div className="rc-step">
-        <span className="rc-step-title">Способ нанесения</span>
-        <div className="rc-choice-row">
-          {METHODS.map((m) => (
-            <button key={m.id} type="button" className={"rc-choice" + (methodId === m.id ? " is-active" : "")} onClick={() => setMethodId(m.id)}>
-              {m.label}
-            </button>
-          ))}
-        </div>
-        <p className="rc-hint">Минимальный заказ и цена уточняются, параметры добавим позже.</p>
-      </div>
-
-      <div className="rc-step">
-        <span className="rc-step-title">Количество</span>
-        <label className="souv-field">
-          <span>Штук</span>
-          <input type="number" min={1} value={qty} onChange={(e) => setQty(Number(e.target.value))} />
-        </label>
-      </div>
-    </>
+    <div className="rc-step">
+      <span className="rc-step-title">Количество</span>
+      <label className="souv-field">
+        <span>Штук — {unitPrice} ₽/шт</span>
+        <input type="number" min={1} value={qty} onChange={(e) => setQty(Number(e.target.value))} />
+      </label>
+      <p className="rc-hint">
+        {PEN_TIERS[0].label} — {PEN_TIERS[0].price} ₽/шт · {PEN_TIERS[1].label} — {PEN_TIERS[1].price} ₽/шт
+      </p>
+    </div>
   );
 }

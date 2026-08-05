@@ -2,44 +2,40 @@
 
 import { useMemo, useState } from "react";
 import CartDrawer from "./CartDrawer";
-import { DESIGN_FEE, WEIGHT_LABEL, TIRAZH_OPTIONS } from "@/lib/chocolate-pricing";
+import { BAG_PRICE, BAG_SIZE_NOTE, BAG_IMAGE } from "@/lib/bag-pricing";
 import { formatRub } from "@/lib/format";
 import "@/components/ribbon-calculator/ribbon-calculator.css";
+import "./bag-calculator.css";
 
 const WHATSAPP_PHONE = "79282699936";
-const PRODUCT_LABEL = "Шоколадки 5 г";
+const PRODUCT_LABEL = "Картонные брендированные пакеты";
 
-export default function ChocolateCalculator() {
+export default function BagCalculator() {
   const [hasArtwork, setHasArtwork] = useState(null);
-  const [tirazhId, setTirazhId] = useState(null);
+  const [qty, setQty] = useState(1);
   const [cartOpen, setCartOpen] = useState(false);
 
-  const tirazh = TIRAZH_OPTIONS.find((t) => t.id === tirazhId);
-
-  const designFee = hasArtwork === false ? DESIGN_FEE : 0;
-  const grandTotal = tirazh ? tirazh.price + designFee : null;
-  const canSubmit = hasArtwork !== null && !!tirazh;
+  const grandTotal = qty > 0 ? BAG_PRICE * qty : null;
+  const canSubmit = hasArtwork !== null && qty > 0;
 
   const order = useMemo(() => {
     if (!canSubmit) return null;
     return {
       productLabel: PRODUCT_LABEL,
-      weightLabel: WEIGHT_LABEL,
-      qty: tirazh.qty,
+      sizeLabel: BAG_SIZE_NOTE,
+      qty,
       hasArtwork,
-      designFee,
       grandTotal,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canSubmit, tirazh, hasArtwork, designFee, grandTotal]);
+  }, [canSubmit, qty, hasArtwork, grandTotal]);
 
   const whatsappUrl = useMemo(() => {
     if (!order) return "#";
-    const lines = ["Здравствуйте!", "Хочу заказать брендированные шоколадки.", ""];
-    lines.push(`Вид продукции: ${order.productLabel}`);
-    lines.push(`Вес шоколадки: ${order.weightLabel}`);
+    const lines = ["Здравствуйте!", "Хочу заказать картонные брендированные пакеты.", ""];
+    lines.push(`Размер: ${order.sizeLabel}`);
     lines.push(`Количество: ${order.qty} шт`);
-    lines.push(`Нужен дизайн: ${hasArtwork === false ? `да (+${DESIGN_FEE} ₽)` : "нет, макет есть"}`);
+    lines.push(`Нужен дизайн: ${hasArtwork === false ? "да, стоимость уточняется" : "нет, макет есть"}`);
     lines.push("");
     lines.push(`Итоговая стоимость: ${formatRub(order.grandTotal)}`);
     const text = encodeURIComponent(lines.join("\n"));
@@ -51,7 +47,7 @@ export default function ChocolateCalculator() {
       <div className="content-inner">
         <div className="rc-head">
           <span className="eyebrow">Рассчитать стоимость</span>
-          <h1 className="section-title">Калькулятор брендированных шоколадок</h1>
+          <h1 className="section-title">Калькулятор картонных брендированных пакетов</h1>
         </div>
 
         {/* Макет — общий блок для всех калькуляторов */}
@@ -83,55 +79,38 @@ export default function ChocolateCalculator() {
           {hasArtwork === false && (
             <div className="rc-note rc-note--fade rc-note--fee">
               <p>Стоимость разработки дизайна</p>
-              <p className="rc-fee-line">+{DESIGN_FEE} ₽</p>
+              <p className="rc-fee-line">Уточняется</p>
             </div>
           )}
         </div>
 
-        {/* Продукция */}
-        <div className="rc-step">
-          <span className="rc-step-title">Шоколадки {WEIGHT_LABEL}</span>
-          <dl className="cart-fact-list">
-            <div className="cart-fact">
-              <dt>Вес шоколадки</dt>
-              <dd>{WEIGHT_LABEL}</dd>
-            </div>
-          </dl>
-        </div>
+        <div className="rc-step rc-silicone">
+          <span className="rc-step-title">{PRODUCT_LABEL}</span>
+          <div className="rc-silicone-row">
+            <img className="rc-silicone-photo" src={BAG_IMAGE} alt={PRODUCT_LABEL} loading="lazy" />
+            <div className="rc-silicone-controls">
+              <dl className="cart-fact-list">
+                <div className="cart-fact">
+                  <dt>Цена</dt>
+                  <dd>{formatRub(BAG_PRICE)}/шт</dd>
+                </div>
+                <div className="cart-fact">
+                  <dt>Размер</dt>
+                  <dd>{BAG_SIZE_NOTE}</dd>
+                </div>
+              </dl>
 
-        {/* Количество */}
-        <div className="rc-step">
-          <span className="rc-step-title">Выберите тираж</span>
-          <div className="rc-choice-row">
-            {TIRAZH_OPTIONS.map((t) => (
-              <button key={t.id} type="button" className={"rc-choice" + (tirazhId === t.id ? " is-active" : "")} onClick={() => setTirazhId(t.id)}>
-                {t.qty} шт — {formatRub(t.price)}
-              </button>
-            ))}
+              <label className="bag-field" style={{ marginTop: 16 }}>
+                <span>Количество, шт</span>
+                <input type="number" min={1} value={qty} onChange={(e) => setQty(Number(e.target.value))} />
+              </label>
+            </div>
           </div>
         </div>
 
         {order && (
           <div className="rc-summary">
             <span className="rc-step-title">Итог заказа</span>
-            <dl className="cart-fact-list">
-              <div className="cart-fact">
-                <dt>Вид продукции</dt>
-                <dd>{order.productLabel}</dd>
-              </div>
-              <div className="cart-fact">
-                <dt>Вес шоколадки</dt>
-                <dd>{order.weightLabel}</dd>
-              </div>
-              <div className="cart-fact">
-                <dt>Количество</dt>
-                <dd>{order.qty} шт</dd>
-              </div>
-              <div className="cart-fact">
-                <dt>Нужен дизайн</dt>
-                <dd>{order.hasArtwork ? "Нет, макет готов" : `Да (+${order.designFee} ₽)`}</dd>
-              </div>
-            </dl>
             <div className="rc-total-row">
               <span>Итоговая стоимость</span>
               <span className="rc-total-value">{formatRub(order.grandTotal)}</span>

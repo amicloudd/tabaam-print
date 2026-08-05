@@ -3,10 +3,12 @@
 import { useMemo, useState } from "react";
 import CartDrawer from "./CartDrawer";
 import {
-  SHEET_MM,
   SHAPES,
   colorPrintCalc,
-  sheetPrice,
+  COLOR_PRICE_PER_M2,
+  COLOR_QTY_MIN,
+  COLOR_QTY_MAX,
+  COLOR_QTY_STEP,
   FILM_COLORS,
   FILM_SIZES,
   filmDiscountPerUnit,
@@ -43,7 +45,7 @@ export default function StickerCalculator() {
   const [shapeId, setShapeId] = useState(null);
   const [colorW, setColorW] = useState(5);
   const [colorH, setColorH] = useState(5);
-  const [colorQty, setColorQty] = useState(100);
+  const [colorQty, setColorQty] = useState(COLOR_QTY_MIN);
 
   // плёнка
   const [filmColorId, setFilmColorId] = useState(null);
@@ -60,21 +62,9 @@ export default function StickerCalculator() {
   const typeLabel = STICKER_TYPES.find((t) => t.id === stickerType)?.label || "—";
 
   // ---- цветная печать ----
-  const colorCalc = useMemo(() => colorPrintCalc(colorQty, colorW, colorH, shapeId), [colorQty, colorW, colorH, shapeId]);
+  const colorCalc = useMemo(() => colorPrintCalc(colorQty, colorW, colorH), [colorQty, colorW, colorH]);
   const shapeLabel = SHAPES.find((s) => s.id === shapeId)?.label;
-  const canSubmitColor = hasArtwork !== null && shapeId !== null && colorW > 0 && colorH > 0 && colorCalc.perSheet > 0 && colorQty > 0;
-
-  const sheetRows = useMemo(() => {
-    if (colorCalc.perSheet <= 0) return [];
-    const rows = [];
-    let remaining = colorQty;
-    for (let i = 1; i <= colorCalc.sheets; i++) {
-      const qtyOnSheet = Math.min(colorCalc.perSheet, remaining);
-      rows.push({ index: i, qty: qtyOnSheet, price: sheetPrice(i) });
-      remaining -= qtyOnSheet;
-    }
-    return rows;
-  }, [colorCalc, colorQty]);
+  const canSubmitColor = hasArtwork !== null && shapeId !== null && colorW > 0 && colorH > 0 && colorQty > 0;
 
   // ---- плёнка ----
   const filmSize = FILM_SIZES.find((s) => s.id === filmSizeId);
@@ -98,7 +88,7 @@ export default function StickerCalculator() {
         facts: [
           { label: "Форма", value: shapeLabel || "—" },
           { label: "Размер", value: `${colorW} × ${colorH} см` },
-          { label: "Листов А (510×250 мм)", value: `${colorCalc.sheets} шт, ${colorCalc.perSheet} наклеек/лист` },
+          { label: "Площадь", value: `${colorCalc.areaM2.toFixed(2)} м² × ${formatRub(COLOR_PRICE_PER_M2)}/м²` },
         ],
         qty: colorQty,
         hasArtwork,
@@ -263,30 +253,22 @@ export default function StickerCalculator() {
                   <input type="number" min={1} step={0.5} value={colorH} onChange={(e) => setColorH(Number(e.target.value))} />
                 </label>
               </div>
-              <p className="rc-hint">
-                Размер печатного листа: {SHEET_MM.w} × {SHEET_MM.h} мм
-                {colorCalc.perSheet > 0 && ` · помещается ${colorCalc.perSheet} шт на лист`}
-                {colorCalc.perSheet === 0 && colorW > 0 && colorH > 0 && " · такой размер не помещается на лист, уменьшите его"}
-              </p>
             </div>
 
             <div className="rc-step">
               <span className="rc-step-title">Количество</span>
               <div className="rc-slider-block">
                 <div className="rc-slider-row">
-                  <input type="range" min={100} max={2000} step={50} value={colorQty} onChange={(e) => setColorQty(Number(e.target.value))} />
+                  <input
+                    type="range"
+                    min={COLOR_QTY_MIN}
+                    max={COLOR_QTY_MAX}
+                    step={COLOR_QTY_STEP}
+                    value={colorQty}
+                    onChange={(e) => setColorQty(Number(e.target.value))}
+                  />
                   <span className="rc-slider-value">{colorQty} шт</span>
                 </div>
-                {sheetRows.length > 0 && (
-                  <div className="rc-order-list">
-                    {sheetRows.map((row) => (
-                      <div className="rc-order-item" key={row.index}>
-                        <span>Лист {row.index} — вмещает {row.qty} шт</span>
-                        <span className="rc-order-price">{formatRub(row.price)}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
 

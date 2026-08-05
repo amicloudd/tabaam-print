@@ -36,8 +36,8 @@ export default function CartDrawer({ open, onClose, order, whatsappUrl }) {
               <dd>{order.productLabel}</dd>
             </div>
             <div className="cart-fact">
-              <dt>Вес шоколадки</dt>
-              <dd>{order.weightLabel}</dd>
+              <dt>Размер</dt>
+              <dd>{order.sizeLabel}</dd>
             </div>
             <div className="cart-fact">
               <dt>Количество</dt>

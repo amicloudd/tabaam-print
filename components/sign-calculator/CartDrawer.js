@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { formatRub } from "@/lib/format";
 
 export default function CartDrawer({ open, onClose, order, whatsappUrl }) {
   const panelRef = useRef(null);
@@ -51,10 +52,12 @@ export default function CartDrawer({ open, onClose, order, whatsappUrl }) {
           </dl>
 
           <div className="cart-total-row">
-            <span>Стоимость</span>
-            <span>Уточняется</span>
+            <span>{order.isEstimate ? "Ориентировочная стоимость" : "Итоговая стоимость"}</span>
+            <span>{order.total === null ? "Уточняется" : formatRub(order.total)}</span>
           </div>
-          <p className="tag-shipping-note">Стоимость зависит от размера, материала и сложности макета — рассчитаем индивидуально.</p>
+          {order.isEstimate && (
+            <p className="tag-shipping-note">Часть стоимости зависит от размера, материала, установки или сложности макета — уточним индивидуально.</p>
+          )}
 
           <a className="btn-primary cart-whatsapp" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
             <span>Отправить заказ в WhatsApp</span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TSHIRT_MIN_QTY, TSHIRT_PRINT_SIZES } from "@/lib/souvenir-pricing";
+import { TSHIRT_MIN_QTY, TSHIRT_PRINT_SIZES, TSHIRT_PRICE } from "@/lib/souvenir-pricing";
 
 export default function TshirtModule({ onOrderChange }) {
   const [ownShirt, setOwnShirt] = useState(null); // "yes" | "no"
@@ -16,15 +16,16 @@ export default function TshirtModule({ onOrderChange }) {
       onOrderChange(null);
       return;
     }
-    const printTotal = printSize.price * qty;
+    const shirtCost = ownShirt === "no" ? TSHIRT_PRICE * qty : 0;
+    const printTotal = printSize.price * qty + shirtCost;
     onOrderChange({
       qty,
       facts: [
-        { label: "Своя футболка", value: ownShirt === "yes" ? "Да" : "Нет — футболка от нас, цена уточняется" },
+        { label: "Своя футболка", value: ownShirt === "yes" ? "Да" : `Нет — футболка от нас, ${TSHIRT_PRICE} ₽/шт` },
         { label: "Размер печати", value: `${printSize.label} — ${printSize.price} ₽/шт` },
       ],
       total: printTotal,
-      isEstimate: ownShirt === "no",
+      isEstimate: false,
       canSubmit: true,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -44,7 +45,7 @@ export default function TshirtModule({ onOrderChange }) {
         </div>
         {ownShirt === "no" && (
           <div className="rc-note rc-note--fade">
-            <p>Стоимость футболки будет добавлена позже.</p>
+            <p>Стоимость футболки — {TSHIRT_PRICE} ₽/шт.</p>
           </div>
         )}
       </div>
@@ -66,7 +67,6 @@ export default function TshirtModule({ onOrderChange }) {
           <span>Штук (минимум {TSHIRT_MIN_QTY})</span>
           <input type="number" min={TSHIRT_MIN_QTY} value={qty} onChange={(e) => setQty(Number(e.target.value))} />
         </label>
-        <p className="rc-hint">Ползунок количества добавим позже.</p>
       </div>
     </>
   );
