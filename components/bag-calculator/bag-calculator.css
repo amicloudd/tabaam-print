@@ -27,3 +27,5 @@
 @media (max-width: 640px) {
   .bag-hero-photo { height: 60vh; }
 }
+
+.rc-submit.is-disabled { opacity: .4; cursor: not-allowed; pointer-events: none; }
