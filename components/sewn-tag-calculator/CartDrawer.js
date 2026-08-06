@@ -44,6 +44,10 @@ export default function CartDrawer({ open, onClose, order, whatsappUrl }) {
               <dd>{order.sizeLabel}</dd>
             </div>
             <div className="cart-fact">
+              <dt>Цвет бирки</dt>
+              <dd>{order.tagColorLabel}</dd>
+            </div>
+            <div className="cart-fact">
               <dt>Цвет нанесения</dt>
               <dd>{order.printColorLabel}</dd>
             </div>

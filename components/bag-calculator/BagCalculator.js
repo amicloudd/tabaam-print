@@ -84,28 +84,27 @@ export default function BagCalculator() {
           )}
         </div>
 
-        <div className="rc-step rc-silicone">
-          <span className="rc-step-title">{PRODUCT_LABEL}</span>
-          <div className="rc-silicone-row">
-            <img className="rc-silicone-photo" src={BAG_IMAGE} alt={PRODUCT_LABEL} loading="lazy" />
-            <div className="rc-silicone-controls">
-              <dl className="cart-fact-list">
-                <div className="cart-fact">
-                  <dt>Цена</dt>
-                  <dd>{formatRub(BAG_PRICE)}/шт</dd>
-                </div>
-                <div className="cart-fact">
-                  <dt>Размер</dt>
-                  <dd>{BAG_SIZE_NOTE}</dd>
-                </div>
-              </dl>
+        <div className="bag-hero-photo">
+          <img src={BAG_IMAGE} alt={PRODUCT_LABEL} loading="lazy" />
+        </div>
 
-              <label className="bag-field" style={{ marginTop: 16 }}>
-                <span>Количество, шт</span>
-                <input type="number" min={1} value={qty} onChange={(e) => setQty(Number(e.target.value))} />
-              </label>
+        <div className="rc-step">
+          <span className="rc-step-title">{PRODUCT_LABEL}</span>
+          <dl className="cart-fact-list">
+            <div className="cart-fact">
+              <dt>Цена</dt>
+              <dd>{formatRub(BAG_PRICE)}/шт</dd>
             </div>
-          </div>
+            <div className="cart-fact">
+              <dt>Размер</dt>
+              <dd>{BAG_SIZE_NOTE}</dd>
+            </div>
+          </dl>
+
+          <label className="bag-field" style={{ marginTop: 16 }}>
+            <span>Количество, шт</span>
+            <input type="number" min={1} value={qty} onChange={(e) => setQty(Number(e.target.value))} />
+          </label>
         </div>
 
         {order && (

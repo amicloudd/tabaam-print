@@ -5,7 +5,7 @@ import CapModule from "./modules/CapModule";
 import BadgeModule from "./modules/BadgeModule";
 import PlasticCardModule from "./modules/PlasticCardModule";
 import ChocolateModule from "./modules/ChocolateModule";
-import CatalogModule from "./modules/CatalogModule";
+import NotebookCatalogModule from "./modules/NotebookCatalogModule";
 
 /**
  * Контракт модуля товара
@@ -35,7 +35,7 @@ export const SOUVENIR_MODULES = [
   { id: "mug", label: "Кружки", Component: MugModule },
   { id: "pen", label: "Ручки", Component: PenModule },
   { id: "cap", label: "Кепки", Component: CapModule },
-  { id: "notebook-catalog", label: "Блокноты и каталоги", Component: CatalogModule },
+  { id: "notebook-catalog", label: "Блокноты и каталоги", Component: NotebookCatalogModule },
   { id: "badge", label: "Бейджики", Component: BadgeModule },
   { id: "plastic-card", label: "Пластиковые карты", Component: PlasticCardModule },
   { id: "chocolate", label: "Шоколадки", Component: ChocolateModule },

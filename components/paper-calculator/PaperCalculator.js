@@ -18,6 +18,7 @@ import {
   FOLDED_CARD,
   CERTIFICATE_PRICE,
   FOIL_ITEMS,
+  NOTEBOOK_STANDARD,
 } from "@/lib/paper-small-pricing";
 import {
   DESIGN_FEE as LARGE_DESIGN_FEE,
@@ -25,7 +26,9 @@ import {
   POSTCARD_QTY_MIN,
   POSTCARD_QTY_MAX,
   POSTCARD_QTY_STEP,
+  NOTEBOOK_LARGE_STANDARD,
 } from "@/lib/paper-large-pricing";
+import { tagsPerSheet, customUnitPrice, doubleSidedUnitFee } from "@/lib/tag-pricing";
 import { formatRub } from "@/lib/format";
 import "@/components/ribbon-calculator/ribbon-calculator.css";
 import "./paper-calculator.css";
@@ -46,16 +49,21 @@ export default function PaperCalculator({ initialDivision = null }) {
   const [smallProductId, setSmallProductId] = useState(null);
   const [bcSideId, setBcSideId] = useState(null);
   const [bcQty, setBcQty] = useState(BUSINESS_CARD_MIN_QTY);
+  const [cardCutType, setCardCutType] = useState("standard"); // "standard" | "custom"
   const [cardSizeId, setCardSizeId] = useState(null);
   const [cardSizeCustom, setCardSizeCustom] = useState("");
   const [cardSideId, setCardSideId] = useState(null);
   const [cardQty, setCardQty] = useState(CARD_MIN_QTY);
+  const [cardCustomWidth, setCardCustomWidth] = useState(50);
+  const [cardCustomHeight, setCardCustomHeight] = useState(80);
+  const [cardCustomQty, setCardCustomQty] = useState(100);
+  const [cardDoubleSided, setCardDoubleSided] = useState(false);
   const [foldedQty, setFoldedQty] = useState(FOLDED_CARD.minQty);
   const [certQty, setCertQty] = useState(1);
   const [foilItemId, setFoilItemId] = useState(null);
   const [foilQty, setFoilQty] = useState(1);
   const selectedFoilItem = FOIL_ITEMS.find((i) => i.id === foilItemId);
-  const [nbCatQty, setNbCatQty] = useState(1);
+  const [nbCatQty, setNbCatQty] = useState(NOTEBOOK_STANDARD.minQty);
 
   // ---- большие тиражи: состояние ----
   const [largeProductId, setLargeProductId] = useState(null);
@@ -79,6 +87,13 @@ export default function PaperCalculator({ initialDivision = null }) {
   const cardSideLabel = PRINT_SIDES.find((s) => s.id === cardSideId)?.label;
   const cardSizeLabel = cardIsOther ? cardSizeCustom.trim() || "уточняется" : cardSize?.label || "—";
 
+  const cardCustomValidSize = cardCustomWidth > 0 && cardCustomHeight > 0;
+  const cardCustomPerSheet = tagsPerSheet(cardCustomWidth, cardCustomHeight);
+  const cardCustomUnitPrice = customUnitPrice(cardCustomWidth, cardCustomHeight);
+  const cardDoubleSidedUnitFee = doubleSidedUnitFee(cardCustomWidth, cardCustomHeight);
+  const cardDoubleSidedFee = cardDoubleSided ? cardDoubleSidedUnitFee * cardCustomQty : 0;
+  const cardCustomTotal = cardCustomUnitPrice * cardCustomQty + cardDoubleSidedFee;
+
   let smallOrder = null;
 
   if (smallProductId === "business" && bcSideId && bcQty >= BUSINESS_CARD_MIN_QTY) {
@@ -90,7 +105,7 @@ export default function PaperCalculator({ initialDivision = null }) {
       isEstimate: false,
       total: bcTotal + designFee,
     };
-  } else if (smallProductId === "cards" && cardSizeId && cardSideId && cardQty > 0 && (!cardIsOther || cardSizeCustom.trim())) {
+  } else if (smallProductId === "cards" && cardCutType === "standard" && cardSizeId && cardSideId && cardQty > 0 && (!cardIsOther || cardSizeCustom.trim())) {
     const known = cardTotal !== null;
     smallOrder = {
       productLabel: smallProductLabel,
@@ -99,6 +114,15 @@ export default function PaperCalculator({ initialDivision = null }) {
       qty: cardQty,
       isEstimate: !known,
       total: known ? cardTotal + designFee : null,
+    };
+  } else if (smallProductId === "cards" && cardCutType === "custom" && cardCustomValidSize && cardCustomPerSheet > 0 && cardCustomQty > 0) {
+    smallOrder = {
+      productLabel: `${smallProductLabel} — фигурная резка`,
+      sizeLabel: `${cardCustomWidth} × ${cardCustomHeight} мм`,
+      printLabel: `${cardCustomQty} шт × ${formatRub(cardCustomUnitPrice)}/шт${cardDoubleSided ? " (двусторонняя)" : ""}`,
+      qty: cardCustomQty,
+      isEstimate: false,
+      total: cardCustomTotal + designFee,
     };
   } else if (smallProductId === "folded" && foldedQty >= FOLDED_CARD.minQty) {
     smallOrder = {
@@ -127,14 +151,14 @@ export default function PaperCalculator({ initialDivision = null }) {
       isEstimate: false,
       total: selectedFoilItem.price * foilQty + designFee,
     };
-  } else if (smallProductId === "notebooks-catalogs" && nbCatQty > 0) {
+  } else if (smallProductId === "notebooks-catalogs" && nbCatQty >= NOTEBOOK_STANDARD.minQty) {
     smallOrder = {
       productLabel: smallProductLabel,
-      sizeLabel: "уточняется",
-      printLabel: null,
+      sizeLabel: NOTEBOOK_STANDARD.formatLabel,
+      printLabel: `${NOTEBOOK_STANDARD.coverLabel}, ${NOTEBOOK_STANDARD.innerLabel}, ${NOTEBOOK_STANDARD.finishLabel}`,
       qty: nbCatQty,
-      isEstimate: true,
-      total: null,
+      isEstimate: false,
+      total: NOTEBOOK_STANDARD.price * nbCatQty + designFee,
     };
   }
 
@@ -148,8 +172,19 @@ export default function PaperCalculator({ initialDivision = null }) {
   const isPostcards = largeProductId === "postcards";
   const postcardTotal = largeSize && largeSize.price != null ? (largeSize.price / 1000) * postcardQty : null;
 
+  const isNotebooksLarge = largeProductId === "notebooks-catalogs";
+
   let largeOrder = null;
-  if (largeProduct && largeSize) {
+  if (isNotebooksLarge) {
+    largeOrder = {
+      productLabel: largeProduct.label,
+      sizeLabel: NOTEBOOK_LARGE_STANDARD.formatLabel,
+      printLabel: `${NOTEBOOK_LARGE_STANDARD.coverLabel}, ${NOTEBOOK_LARGE_STANDARD.innerLabel}, ${NOTEBOOK_LARGE_STANDARD.finishLabel}`,
+      qty: NOTEBOOK_LARGE_STANDARD.qty,
+      isEstimate: false,
+      total: NOTEBOOK_LARGE_STANDARD.price + designFee,
+    };
+  } else if (largeProduct && largeSize) {
     const largeKnownPrice = largeSize.price != null;
     if (isPostcards) {
       largeOrder = {
@@ -324,58 +359,137 @@ export default function PaperCalculator({ initialDivision = null }) {
             {smallProductId === "cards" && (
               <>
                 <div className="rc-step">
-                  <span className="rc-step-title">Размер</span>
+                  <span className="rc-step-title">Тип реза</span>
                   <div className="rc-choice-row">
-                    {CARD_SIZES.map((s) => (
-                      <button key={s.id} type="button" className={"rc-choice" + (cardSizeId === s.id ? " is-active" : "")} onClick={() => setCardSizeId(s.id)}>
-                        {s.label}
-                      </button>
-                    ))}
+                    <button type="button" className={"rc-choice" + (cardCutType === "standard" ? " is-active" : "")} onClick={() => setCardCutType("standard")}>
+                      Стандартный размер
+                    </button>
+                    <button type="button" className={"rc-choice" + (cardCutType === "custom" ? " is-active" : "")} onClick={() => setCardCutType("custom")}>
+                      Фигурная резка
+                    </button>
                   </div>
-                  {cardIsOther && (
-                    <label className="pc-field">
-                      <span>Укажите размер</span>
-                      <input type="text" value={cardSizeCustom} onChange={(e) => setCardSizeCustom(e.target.value)} placeholder="например, 12 × 8 см" />
-                    </label>
-                  )}
                 </div>
 
-                {cardSizeId && (
-                  <div className="rc-step">
-                    <span className="rc-step-title">Тип печати</span>
-                    <div className="rc-choice-row">
-                      {PRINT_SIDES.map((s) => (
-                        <button key={s.id} type="button" className={"rc-choice" + (cardSideId === s.id ? " is-active" : "")} onClick={() => setCardSideId(s.id)}>
-                          {s.label}
-                          {cardSize[s.id] != null ? ` — ${cardSize[s.id]} ₽/шт` : " — цена уточняется"}
-                        </button>
-                      ))}
+                {cardCutType === "standard" && (
+                  <>
+                    <div className="rc-step">
+                      <span className="rc-step-title">Размер</span>
+                      <div className="rc-choice-row">
+                        {CARD_SIZES.map((s) => (
+                          <button key={s.id} type="button" className={"rc-choice" + (cardSizeId === s.id ? " is-active" : "")} onClick={() => setCardSizeId(s.id)}>
+                            {s.label}
+                          </button>
+                        ))}
+                      </div>
+                      {cardIsOther && (
+                        <label className="pc-field">
+                          <span>Укажите размер</span>
+                          <input type="text" value={cardSizeCustom} onChange={(e) => setCardSizeCustom(e.target.value)} placeholder="например, 12 × 8 см" />
+                        </label>
+                      )}
                     </div>
-                  </div>
+
+                    {cardSizeId && (
+                      <div className="rc-step">
+                        <span className="rc-step-title">Тип печати</span>
+                        <div className="rc-choice-row">
+                          {PRINT_SIDES.map((s) => (
+                            <button key={s.id} type="button" className={"rc-choice" + (cardSideId === s.id ? " is-active" : "")} onClick={() => setCardSideId(s.id)}>
+                              {s.label}
+                              {cardSize[s.id] != null ? ` — ${cardSize[s.id]} ₽/шт` : " — цена уточняется"}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="rc-step">
+                      <span className="rc-step-title">Количество</span>
+                      <div className="rc-slider-block">
+                        <div className="rc-slider-row">
+                          <input
+                            type="range"
+                            min={CARD_MIN_QTY}
+                            max={CARD_MAX_QTY}
+                            step={CARD_QTY_STEP}
+                            value={cardQty}
+                            onChange={(e) => setCardQty(Number(e.target.value))}
+                          />
+                          <span className="rc-slider-value">{cardQty} шт</span>
+                        </div>
+                        {cardSidePrice !== null && cardSidePrice !== undefined && (
+                          <div className="rc-order-item">
+                            <span>{cardQty} шт × {formatRub(cardSidePrice)}/шт</span>
+                            <span className="rc-order-price">{formatRub(cardTotal)}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </>
                 )}
 
-                <div className="rc-step">
-                  <span className="rc-step-title">Количество</span>
-                  <div className="rc-slider-block">
-                    <div className="rc-slider-row">
-                      <input
-                        type="range"
-                        min={CARD_MIN_QTY}
-                        max={CARD_MAX_QTY}
-                        step={CARD_QTY_STEP}
-                        value={cardQty}
-                        onChange={(e) => setCardQty(Number(e.target.value))}
-                      />
-                      <span className="rc-slider-value">{cardQty} шт</span>
+                {cardCutType === "custom" && (
+                  <div className="rc-step">
+                    <p className="rc-hint">
+                      Укажите произвольный размер карточки — мы посчитаем, сколько поместится на лист А3, и подберём цену.
+                    </p>
+                    <div className="tag-custom-inputs">
+                      <label className="tag-input-field">
+                        <span>Ширина, мм</span>
+                        <input
+                          type="number"
+                          min={10}
+                          max={420}
+                          value={cardCustomWidth}
+                          onChange={(e) => setCardCustomWidth(Number(e.target.value))}
+                        />
+                      </label>
+                      <label className="tag-input-field">
+                        <span>Высота, мм</span>
+                        <input
+                          type="number"
+                          min={10}
+                          max={420}
+                          value={cardCustomHeight}
+                          onChange={(e) => setCardCustomHeight(Number(e.target.value))}
+                        />
+                      </label>
+                      <label className="tag-input-field">
+                        <span>Количество, шт</span>
+                        <input
+                          type="number"
+                          min={1}
+                          step={10}
+                          value={cardCustomQty}
+                          onChange={(e) => setCardCustomQty(Number(e.target.value))}
+                        />
+                      </label>
                     </div>
-                    {cardSidePrice !== null && cardSidePrice !== undefined && (
-                      <div className="rc-order-item">
-                        <span>{cardQty} шт × {formatRub(cardSidePrice)}/шт</span>
-                        <span className="rc-order-price">{formatRub(cardTotal)}</span>
+
+                    {cardCustomValidSize && cardCustomPerSheet === 0 && (
+                      <p className="rc-hint">Такой размер не помещается на лист А3 — уменьшите ширину или высоту.</p>
+                    )}
+
+                    {cardCustomPerSheet > 0 && (
+                      <div className="tag-option-row" style={{ marginTop: 16 }}>
+                        <span className="tag-option-label">Двусторонняя печать</span>
+                        <div className="rc-choice-row">
+                          <button type="button" className={"rc-choice" + (!cardDoubleSided ? " is-active" : "")} onClick={() => setCardDoubleSided(false)}>
+                            Нет
+                          </button>
+                          <button type="button" className={"rc-choice" + (cardDoubleSided ? " is-active" : "")} onClick={() => setCardDoubleSided(true)}>
+                            Да
+                          </button>
+                        </div>
+                        {cardDoubleSided && (
+                          <p className="rc-hint tag-option-hint">
+                            +{formatRub(cardDoubleSidedUnitFee)}/шт ({formatRub(cardDoubleSidedFee)})
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
-                </div>
+                )}
               </>
             )}
 
@@ -490,14 +604,41 @@ export default function PaperCalculator({ initialDivision = null }) {
 
             {/* БЛОКНОТЫ И КАТАЛОГИ */}
             {smallProductId === "notebooks-catalogs" && (
-              <div className="rc-step">
-                <span className="rc-step-title">Количество</span>
-                <label className="pc-field" style={{ marginTop: 0 }}>
-                  <span>Штук</span>
-                  <input type="number" min={1} value={nbCatQty} onChange={(e) => setNbCatQty(Number(e.target.value))} />
-                </label>
-                <p className="rc-hint">Размер и стоимость уточняются индивидуально.</p>
-              </div>
+              <>
+                <div className="rc-step">
+                  <span className="rc-step-title">Стандарт</span>
+                  <dl className="cart-fact-list">
+                    <div className="cart-fact">
+                      <dt>Формат</dt>
+                      <dd>Блокноты {NOTEBOOK_STANDARD.formatLabel}</dd>
+                    </div>
+                    <div className="cart-fact">
+                      <dt>Обложка</dt>
+                      <dd>{NOTEBOOK_STANDARD.coverLabel}</dd>
+                    </div>
+                    <div className="cart-fact">
+                      <dt>Внутренний блок</dt>
+                      <dd>{NOTEBOOK_STANDARD.innerLabel}</dd>
+                    </div>
+                    <div className="cart-fact">
+                      <dt>Отделка</dt>
+                      <dd>{NOTEBOOK_STANDARD.finishLabel}</dd>
+                    </div>
+                    <div className="cart-fact">
+                      <dt>Стоимость</dt>
+                      <dd>{NOTEBOOK_STANDARD.price} ₽/шт</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <div className="rc-step">
+                  <span className="rc-step-title">Количество</span>
+                  <label className="pc-field" style={{ marginTop: 0 }}>
+                    <span>Штук (минимум {NOTEBOOK_STANDARD.minQty})</span>
+                    <input type="number" min={NOTEBOOK_STANDARD.minQty} value={nbCatQty} onChange={(e) => setNbCatQty(Number(e.target.value))} />
+                  </label>
+                </div>
+              </>
             )}
           </>
         )}
@@ -516,7 +657,41 @@ export default function PaperCalculator({ initialDivision = null }) {
               </div>
             </div>
 
-            {largeProduct && (
+            {largeProduct && isNotebooksLarge && (
+              <>
+                <div className="rc-step">
+                  <span className="rc-step-title">Стандарт</span>
+                  <dl className="cart-fact-list">
+                    <div className="cart-fact">
+                      <dt>Формат</dt>
+                      <dd>Блокноты {NOTEBOOK_LARGE_STANDARD.formatLabel}</dd>
+                    </div>
+                    <div className="cart-fact">
+                      <dt>Обложка</dt>
+                      <dd>{NOTEBOOK_LARGE_STANDARD.coverLabel}</dd>
+                    </div>
+                    <div className="cart-fact">
+                      <dt>Внутренний блок</dt>
+                      <dd>{NOTEBOOK_LARGE_STANDARD.innerLabel}</dd>
+                    </div>
+                    <div className="cart-fact">
+                      <dt>Отделка</dt>
+                      <dd>{NOTEBOOK_LARGE_STANDARD.finishLabel}</dd>
+                    </div>
+                    <div className="cart-fact">
+                      <dt>Количество</dt>
+                      <dd>{NOTEBOOK_LARGE_STANDARD.qty} шт (только эта партия)</dd>
+                    </div>
+                    <div className="cart-fact">
+                      <dt>Стоимость</dt>
+                      <dd>{formatRub(NOTEBOOK_LARGE_STANDARD.price)}</dd>
+                    </div>
+                  </dl>
+                </div>
+              </>
+            )}
+
+            {largeProduct && !isNotebooksLarge && (
               <>
                 {largeProduct.printTypeLabel && (
                   <div className="rc-step">

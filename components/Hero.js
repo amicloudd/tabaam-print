@@ -156,6 +156,7 @@ export default function Hero() {
     (e) => {
       const st = stateRef.current;
       if (!st.dragging) return;
+      if (e.cancelable) e.preventDefault();
       st.dragCurX = e.clientX;
       const delta = st.dragCurX - st.dragStartX;
       layout(activeRef.current, delta);
@@ -318,10 +319,12 @@ export default function Hero() {
       </div>
 
       <div className="meta-bar">
-        <span className="eyebrow-label">Рассчитать стоимость</span>
-        <a className="caption" ref={captionRef} href={`/catalog/${MOCKUPS[active].slug}`}>
-          <span className="caption-text">{MOCKUPS[active].alt}</span>
-          <span className="caption-arrow" aria-hidden="true">
+        <span className="caption" ref={captionRef}>
+          {MOCKUPS[active].alt}
+        </span>
+        <a className="btn-primary hero-calc-btn" href={`/catalog/${MOCKUPS[active].slug}`}>
+          <span>Рассчитать стоимость</span>
+          <span className="btn-arrow" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>

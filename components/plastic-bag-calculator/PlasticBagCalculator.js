@@ -140,6 +140,7 @@ export default function PlasticBagCalculator() {
                   </button>
                 ))}
               </div>
+              <p className="rc-hint">Все цены указаны за 100 шт.</p>
             </div>
 
             {size && (

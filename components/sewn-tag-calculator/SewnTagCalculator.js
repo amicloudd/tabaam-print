@@ -8,6 +8,7 @@ import {
   SATIN_PRICE_PER_UNIT,
   SATIN_MIN_QTY,
   satinLineTotal,
+  SATIN_COLORS,
   PRINT_COLORS,
   JACQUARD_MIN_QTY,
   JACQUARD_SIZES,
@@ -26,6 +27,7 @@ export default function SewnTagCalculator() {
 
   const [satinSizeId, setSatinSizeId] = useState(SATIN_SIZES[0].id);
   const [satinQty, setSatinQty] = useState(100);
+  const [tagColorId, setTagColorId] = useState(null);
   const [printColorId, setPrintColorId] = useState(null);
   const [printColorCustom, setPrintColorCustom] = useState("");
 
@@ -36,6 +38,7 @@ export default function SewnTagCalculator() {
   const [cartOpen, setCartOpen] = useState(false);
 
   const satinSize = SATIN_SIZES.find((s) => s.id === satinSizeId);
+  const tagColor = SATIN_COLORS.find((c) => c.id === tagColorId);
   const printColor = PRINT_COLORS.find((c) => c.id === printColorId);
   const printColorLabel = printColor ? (printColor.id === "other" ? printColorCustom.trim() || "другой цвет" : printColor.label) : "—";
 
@@ -43,7 +46,12 @@ export default function SewnTagCalculator() {
   const satinBaseTotal = satinLineTotal(satinQty);
   const satinGrandTotal = satinBaseTotal + designFee;
 
-  const canSubmitSatin = hasArtwork !== null && satinQty > 0 && printColorId !== null && (printColorId !== "other" || printColorCustom.trim().length > 0);
+  const canSubmitSatin =
+    hasArtwork !== null &&
+    satinQty > 0 &&
+    tagColorId !== null &&
+    printColorId !== null &&
+    (printColorId !== "other" || printColorCustom.trim().length > 0);
 
   const jacquardSize = JACQUARD_SIZES.find((s) => s.id === jacquardSizeId);
   const jacquardSizeLabel = jacquardSize ? (jacquardSize.id === "other" ? jacquardSizeCustom.trim() || "уточняется" : jacquardSize.label) : "—";
@@ -53,13 +61,14 @@ export default function SewnTagCalculator() {
       tagTypeLabel: "Пришивные сатиновые",
       productionLabel: "Своё производство",
       sizeLabel: satinSize?.label || "—",
+      tagColorLabel: tagColor?.label || "—",
       printColorLabel,
       qty: satinQty,
       hasArtwork,
       designFee,
       grandTotal: satinGrandTotal,
     }),
-    [satinSize, printColorLabel, satinQty, hasArtwork, designFee, satinGrandTotal]
+    [satinSize, tagColor, printColorLabel, satinQty, hasArtwork, designFee, satinGrandTotal]
   );
 
   const whatsappUrl = useMemo(() => {
@@ -67,6 +76,7 @@ export default function SewnTagCalculator() {
     lines.push("Тип бирок: пришивные сатиновые");
     lines.push("Производство: своё");
     lines.push(`Размер: ${satinSize?.label || "—"}`);
+    lines.push(`Цвет бирки: ${tagColor?.label || "—"}`);
     lines.push(`Цвет нанесения: ${printColorLabel.toLowerCase()}`);
     lines.push(`Количество: ${satinQty} шт`);
     lines.push(`Нужен дизайн: ${hasArtwork === false ? "да" : "нет, макет есть"}`);
@@ -74,7 +84,7 @@ export default function SewnTagCalculator() {
     lines.push(`Итоговая стоимость: ${formatRub(satinGrandTotal)}`);
     const text = encodeURIComponent(lines.join("\n"));
     return `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
-  }, [satinSize, printColorLabel, satinQty, hasArtwork, satinGrandTotal]);
+  }, [satinSize, tagColor, printColorLabel, satinQty, hasArtwork, satinGrandTotal]);
 
   const chinaWhatsappUrl = useMemo(() => {
     const lines = ["Здравствуйте!", "Интересует производство вышитых (жаккардовых) бирок в Китае.", ""];
@@ -192,6 +202,22 @@ export default function SewnTagCalculator() {
             </div>
 
             <div className="rc-step">
+              <span className="rc-step-title">Выберите цвет бирки</span>
+              <div className="rc-carousel">
+                {SATIN_COLORS.map((c) => (
+                  <div className={"ribbon-card" + (tagColorId === c.id ? " is-selected" : "")} key={c.id}>
+                    <button type="button" className="ribbon-card-tap" onClick={() => setTagColorId(c.id)} aria-label={`Цвет бирки: ${c.label}`}>
+                      <span className="ribbon-card-photo">
+                        <img src={c.src} alt={c.label} loading="lazy" />
+                      </span>
+                      <span className="ribbon-card-name">{c.label}</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rc-step">
               <span className="rc-step-title">Выберите цвет нанесения</span>
               <div className="rc-swatch-row">
                 {PRINT_COLORS.map((c) => (
@@ -225,7 +251,7 @@ export default function SewnTagCalculator() {
                   </svg>
                 </span>
               </button>
-              {!canSubmitSatin && <p className="rc-hint rc-hint--center">Ответьте про макет и выберите цвет нанесения.</p>}
+              {!canSubmitSatin && <p className="rc-hint rc-hint--center">Ответьте про макет, выберите цвет бирки и цвет нанесения.</p>}
             </div>
 
             <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} order={order} whatsappUrl={whatsappUrl} />

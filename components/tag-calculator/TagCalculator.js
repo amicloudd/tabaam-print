@@ -12,7 +12,7 @@ import {
   sheetPriceFor,
   sheetsNeeded,
   customLineTotal,
-  DOUBLE_SIDED_PER_SHEET,
+  doubleSidedUnitFee,
   ROUNDED_CORNERS_PER_TAG,
   TAG_HOLDER_PER_TAG,
   CHINA_INFO,
@@ -51,7 +51,9 @@ export default function TagCalculator() {
   const baseTotal = isStandard ? standardLineTotal(standardQty) : customLineTotal(customQty, customWidth, customHeight);
   const standardDiscount = isStandard ? standardDiscountPercent(standardQty) : 0;
 
-  const doubleSidedFee = doubleSided ? sheets * DOUBLE_SIDED_PER_SHEET : 0;
+  const effectiveDoubleSided = isStandard ? true : doubleSided;
+  const doubleSidedRate = useMemo(() => doubleSidedUnitFee(widthMm, heightMm), [widthMm, heightMm]);
+  const doubleSidedFee = !isStandard && doubleSided ? qty * doubleSidedRate : 0;
   const roundedFee = roundedCorners ? qty * ROUNDED_CORNERS_PER_TAG : 0;
   const holderFee = tagHolders ? qty * TAG_HOLDER_PER_TAG : 0;
   const designFee = hasArtwork === false ? DESIGN_FEE : 0;
@@ -76,7 +78,7 @@ export default function TagCalculator() {
       hasArtwork,
       baseLabel,
       baseTotal,
-      doubleSided,
+      doubleSided: effectiveDoubleSided,
       doubleSidedFee,
       roundedCorners,
       roundedFee,
@@ -85,7 +87,7 @@ export default function TagCalculator() {
       designFee,
       grandTotal,
     }),
-    [tagTypeLabel, sizeLabel, qty, hasArtwork, baseLabel, baseTotal, doubleSided, doubleSidedFee, roundedCorners, roundedFee, tagHolders, holderFee, designFee, grandTotal]
+    [tagTypeLabel, sizeLabel, qty, hasArtwork, baseLabel, baseTotal, effectiveDoubleSided, doubleSidedFee, roundedCorners, roundedFee, tagHolders, holderFee, designFee, grandTotal]
   );
 
   const whatsappUrl = useMemo(() => {
@@ -94,14 +96,14 @@ export default function TagCalculator() {
     lines.push(`Тип бирки: ${tagTypeLabel} (${sizeLabel})`);
     lines.push(`Количество: ${qty} шт`);
     lines.push(`Нужен дизайн: ${hasArtwork === false ? "да" : "нет, макет есть"}`);
-    if (doubleSided) lines.push("Двусторонняя печать: да");
+    if (effectiveDoubleSided) lines.push("Двусторонняя печать: да");
     if (roundedCorners) lines.push("Скругление углов: да");
     if (tagHolders) lines.push("Биркодержатели: да");
     lines.push("");
     lines.push(`Итоговая стоимость: ${formatRub(grandTotal)}`);
     const text = encodeURIComponent(lines.join("\n"));
     return `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
-  }, [tagTypeLabel, sizeLabel, qty, hasArtwork, doubleSided, roundedCorners, tagHolders, grandTotal]);
+  }, [tagTypeLabel, sizeLabel, qty, hasArtwork, effectiveDoubleSided, roundedCorners, tagHolders, grandTotal]);
 
   const chinaWhatsappUrl = useMemo(() => {
     const text = encodeURIComponent(
@@ -212,6 +214,10 @@ export default function TagCalculator() {
                     <dd>{STANDARD.sizeLabel}</dd>
                   </div>
                   <div className="cart-fact">
+                    <dt>Печать</dt>
+                    <dd>Двусторонняя (включена)</dd>
+                  </div>
+                  <div className="cart-fact">
                     <dt>Материал</dt>
                     <dd>{STANDARD.material}</dd>
                   </div>
@@ -289,14 +295,6 @@ export default function TagCalculator() {
                   </label>
                 </div>
 
-                {validSize && perSheet > 0 && (
-                  <div className="rc-order-item tag-custom-summary">
-                    <span>
-                      {perSheet} шт на лист А3 · нужно {sheets} лист(ов) · {formatRub(sheetPriceFor(Math.max(widthMm, heightMm)))}/лист
-                    </span>
-                    <span className="rc-order-price">{formatRub(baseTotal)}</span>
-                  </div>
-                )}
                 {validSize && perSheet === 0 && (
                   <p className="rc-hint">Такой размер не помещается на лист А3 — уменьшите ширину или высоту.</p>
                 )}
@@ -308,18 +306,24 @@ export default function TagCalculator() {
             <div className="rc-step">
               <span className="rc-step-title">Дополнительные опции</span>
 
-              <div className="tag-option-row">
-                <span className="tag-option-label">Двусторонняя печать</span>
-                <div className="rc-choice-row">
-                  <button type="button" className={"rc-choice" + (!doubleSided ? " is-active" : "")} onClick={() => setDoubleSided(false)}>
-                    Нет
-                  </button>
-                  <button type="button" className={"rc-choice" + (doubleSided ? " is-active" : "")} onClick={() => setDoubleSided(true)}>
-                    Да
-                  </button>
+              {!isStandard && (
+                <div className="tag-option-row">
+                  <span className="tag-option-label">Двусторонняя печать</span>
+                  <div className="rc-choice-row">
+                    <button type="button" className={"rc-choice" + (!doubleSided ? " is-active" : "")} onClick={() => setDoubleSided(false)}>
+                      Нет
+                    </button>
+                    <button type="button" className={"rc-choice" + (doubleSided ? " is-active" : "")} onClick={() => setDoubleSided(true)}>
+                      Да
+                    </button>
+                  </div>
+                  {doubleSided && (
+                    <p className="rc-hint tag-option-hint">
+                      +{formatRub(doubleSidedRate)}/шт ({formatRub(doubleSidedFee)})
+                    </p>
+                  )}
                 </div>
-                {doubleSided && <p className="rc-hint tag-option-hint">+{DOUBLE_SIDED_PER_SHEET} ₽ за каждый лист А3 ({formatRub(doubleSidedFee)})</p>}
-              </div>
+              )}
 
               <div className="tag-option-row">
                 <span className="tag-option-label">Скругление углов</span>

@@ -9,3 +9,21 @@
   background: var(--card); outline: none; transition: border-color .2s ease;
 }
 .bag-field input:focus { border-color: var(--gold-2); }
+
+.bag-hero-photo {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  height: 80vh;
+  background: var(--card);
+  margin-bottom: clamp(32px, 6vw, 56px);
+}
+.bag-hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+@media (max-width: 640px) {
+  .bag-hero-photo { height: 60vh; }
+}
