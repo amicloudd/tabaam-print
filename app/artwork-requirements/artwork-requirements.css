@@ -1,7 +1,8 @@
 .ar-back {
   display: flex; width: fit-content; align-items: center; gap: 7px;
-  font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+  font-family: var(--font-sans); font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
   color: var(--ink-soft); text-decoration: none; margin: 0 0 clamp(20px, 4vw, 32px);
+  background: none; border: none; padding: 0; cursor: pointer;
   transition: color .2s ease;
 }
 .ar-back:hover, .ar-back:focus-visible { color: var(--ink); }

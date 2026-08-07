@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
+import BackButton from "@/components/BackButton";
 import "./artwork-requirements.css";
 
 export const metadata = {
@@ -37,12 +38,12 @@ export default function ArtworkRequirementsPage() {
 
       <section className="content-section">
         <div className="content-inner content-inner--narrow">
-          <a className="ar-back" href="/">
+          <BackButton className="ar-back">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M19 12H5M11 6l-6 6 6 6" />
             </svg>
-            <span>На главную</span>
-          </a>
+            <span>Назад</span>
+          </BackButton>
 
           <Reveal>
             <span className="eyebrow">Макет</span>
