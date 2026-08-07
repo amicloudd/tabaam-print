@@ -252,17 +252,24 @@ export default function Hero() {
     }
 
     function startWhenVisible(fn) {
-      if (document.visibilityState === "visible") {
+      let started = false;
+      function run() {
+        if (started) return;
+        started = true;
+        document.removeEventListener("visibilitychange", handler);
         requestAnimationFrame(() => requestAnimationFrame(fn));
-        return;
       }
       function handler() {
-        if (document.visibilityState === "visible") {
-          document.removeEventListener("visibilitychange", handler);
-          requestAnimationFrame(() => requestAnimationFrame(fn));
-        }
+        if (document.visibilityState === "visible") run();
+      }
+      if (document.visibilityState === "visible") {
+        run();
+        return;
       }
       document.addEventListener("visibilitychange", handler);
+      // страховка: если visibilitychange по какой-то причине не срабатывает
+      // (некоторые мобильные браузеры/встроенные webview), не блокируем карусель навсегда
+      setTimeout(run, 1500);
     }
 
     startWhenVisible(boot);
@@ -296,7 +303,7 @@ export default function Hero() {
               }}
             >
               <div className="mockup-card">
-                <img src={m.src} alt={m.alt} />
+                <img src={m.src} alt={m.alt} loading="lazy" decoding="async" />
               </div>
             </div>
           ))}

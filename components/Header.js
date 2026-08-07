@@ -3,14 +3,14 @@ import { LOGO } from "@/lib/assets";
 export default function Header() {
   return (
     <header id="siteHeader">
-      <a className="site-logo" href="#hero" aria-label="tabaam.print — на главную">
+      <a className="site-logo" href="/" aria-label="tabaam.print — на главную">
         <img src={LOGO} alt="tabaam.print" />
         <span className="site-logo-text">tabaam.print</span>
       </a>
       <nav className="site-nav" aria-label="Основная навигация">
-        <a href="#hero">Каталог</a>
-        <a href="#about">О нас</a>
-        <a href="#design">Дизайн</a>
+        <a href="/#hero">Каталог</a>
+        <a href="/#about">О нас</a>
+        <a href="/#design">Дизайн</a>
       </nav>
       <div className="site-contacts">
         <a

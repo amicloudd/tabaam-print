@@ -10,9 +10,9 @@ export default function Footer() {
         </div>
         <div className="footer-col">
           <span className="footer-heading">Каталог</span>
-          <a href="#hero">Все категории</a>
-          <a href="#about">О нас</a>
-          <a href="#design">Дизайн</a>
+          <a href="/#hero">Все категории</a>
+          <a href="/#about">О нас</a>
+          <a href="/#design">Дизайн</a>
         </div>
         <div className="footer-col">
           <span className="footer-heading">Контакты</span>

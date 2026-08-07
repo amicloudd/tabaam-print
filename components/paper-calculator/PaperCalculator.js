@@ -19,6 +19,7 @@ import {
   CERTIFICATE_PRICE,
   FOIL_ITEMS,
   NOTEBOOK_STANDARD,
+  LEAFLET_ITEMS,
 } from "@/lib/paper-small-pricing";
 import {
   DESIGN_FEE as LARGE_DESIGN_FEE,
@@ -64,6 +65,8 @@ export default function PaperCalculator({ initialDivision = null }) {
   const [foilQty, setFoilQty] = useState(1);
   const selectedFoilItem = FOIL_ITEMS.find((i) => i.id === foilItemId);
   const [nbCatQty, setNbCatQty] = useState(NOTEBOOK_STANDARD.minQty);
+  const [leafletItemId, setLeafletItemId] = useState(null);
+  const selectedLeafletItem = LEAFLET_ITEMS.find((i) => i.id === leafletItemId);
 
   // ---- большие тиражи: состояние ----
   const [largeProductId, setLargeProductId] = useState(null);
@@ -159,6 +162,15 @@ export default function PaperCalculator({ initialDivision = null }) {
       qty: nbCatQty,
       isEstimate: false,
       total: NOTEBOOK_STANDARD.price * nbCatQty + designFee,
+    };
+  } else if (smallProductId === "leaflets-flyers-booklets" && selectedLeafletItem) {
+    smallOrder = {
+      productLabel: `${smallProductLabel} — ${selectedLeafletItem.label}`,
+      sizeLabel: selectedLeafletItem.label,
+      printLabel: null,
+      qty: selectedLeafletItem.qty,
+      isEstimate: false,
+      total: selectedLeafletItem.price + designFee,
     };
   }
 
@@ -639,6 +651,25 @@ export default function PaperCalculator({ initialDivision = null }) {
                   </label>
                 </div>
               </>
+            )}
+
+            {/* ЛИСТОВКИ, ФЛАЕРЫ, БУКЛЕТЫ */}
+            {smallProductId === "leaflets-flyers-booklets" && (
+              <div className="rc-step">
+                <span className="rc-step-title">Выберите вариант</span>
+                <div className="rc-choice-row">
+                  {LEAFLET_ITEMS.map((it) => (
+                    <button
+                      key={it.id}
+                      type="button"
+                      className={"rc-choice" + (leafletItemId === it.id ? " is-active" : "")}
+                      onClick={() => setLeafletItemId(it.id)}
+                    >
+                      {it.label} — {it.qty} шт — {formatRub(it.price)}
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
           </>
         )}
