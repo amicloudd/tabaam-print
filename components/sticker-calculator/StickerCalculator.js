@@ -328,7 +328,7 @@ export default function StickerCalculator() {
                   <div className="rc-order-item">
                     <span>
                       {filmQty} шт × {formatRub(Math.max(filmSize.price - filmDiscount, 0))}
-                      {filmDiscount > 0 && ` (скидка ${filmDiscount} ₽/шт)`}
+                      {filmDiscount > 0 && ` (со скидкой)`}
                     </span>
                     <span className="rc-order-price">{formatRub(filmTotal)}</span>
                   </div>

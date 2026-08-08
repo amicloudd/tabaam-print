@@ -77,7 +77,7 @@ export default function SewnTagCalculator() {
     lines.push("Производство: своё");
     lines.push(`Размер: ${satinSize?.label || "—"}`);
     lines.push(`Цвет бирки: ${tagColor?.label || "—"}`);
-    lines.push(`Цвет нанесения: ${printColorLabel.toLowerCase()}`);
+    lines.push(`Цвет печати: ${printColorLabel.toLowerCase()}`);
     lines.push(`Количество: ${satinQty} шт`);
     lines.push(`Нужен дизайн: ${hasArtwork === false ? "да" : "нет, макет есть"}`);
     lines.push("");
@@ -218,7 +218,7 @@ export default function SewnTagCalculator() {
             </div>
 
             <div className="rc-step">
-              <span className="rc-step-title">Выберите цвет нанесения</span>
+              <span className="rc-step-title">Выберите цвет печати</span>
               <div className="rc-swatch-row">
                 {PRINT_COLORS.map((c) => (
                   <button key={c.id} type="button" className={"rc-swatch" + (printColorId === c.id ? " is-active" : "")} onClick={() => setPrintColorId(c.id)}>
@@ -231,7 +231,7 @@ export default function SewnTagCalculator() {
               </div>
               {printColorId === "other" && (
                 <label className="stc-text-field">
-                  <span>Укажите желаемый цвет нанесения</span>
+                  <span>Укажите желаемый цвет печати</span>
                   <input type="text" value={printColorCustom} onChange={(e) => setPrintColorCustom(e.target.value)} placeholder="например, бордовый" />
                 </label>
               )}
@@ -251,7 +251,7 @@ export default function SewnTagCalculator() {
                   </svg>
                 </span>
               </button>
-              {!canSubmitSatin && <p className="rc-hint rc-hint--center">Ответьте про макет, выберите цвет бирки и цвет нанесения.</p>}
+              {!canSubmitSatin && <p className="rc-hint rc-hint--center">Ответьте про макет, выберите цвет бирки и цвет печати.</p>}
             </div>
 
             <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} order={order} whatsappUrl={whatsappUrl} />

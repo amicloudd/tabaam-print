@@ -96,7 +96,7 @@ export default function RibbonCalculator({ ribbons }) {
   const whatsappUrl = useMemo(() => {
     const lines = ["Здравствуйте!", "Хочу заказать печать на лентах.", ""];
     lines.push(`Размер: ${widthInfo.label}`);
-    lines.push(`Цвет нанесения: ${printColorLabel !== "—" ? printColorLabel.toLowerCase() : "—"}`);
+    lines.push(`Цвет печати: ${printColorLabel !== "—" ? printColorLabel.toLowerCase() : "—"}`);
     lines.push(`Нужен дизайн: ${hasArtwork === false ? "да" : "нет, макет есть"}`);
     if (selectedRibbons.length > 0) {
       lines.push("");
@@ -181,39 +181,9 @@ export default function RibbonCalculator({ ribbons }) {
           </div>
         </div>
 
-        {/* 3. Цвет нанесения */}
+        {/* 3. Выбор цветов лент */}
         <div className="rc-step">
-          <span className="rc-step-title">3. Цвет нанесения</span>
-          <p className="rc-hint">Можно выбрать несколько цветов.</p>
-          {PRINT_COLOR_GROUPS.map((group) => (
-            <div className="rc-color-group" key={group.title}>
-              <span className="rc-color-group-title">{group.title}</span>
-              <div className="rc-swatch-row">
-                {group.colors.map((c) => (
-                  <button
-                    key={c.id}
-                    type="button"
-                    className={"rc-swatch" + (printColorIds.includes(c.id) ? " is-active" : "")}
-                    onClick={() => togglePrintColor(c.id)}
-                    aria-pressed={printColorIds.includes(c.id)}
-                  >
-                    <span
-                      className={"rc-swatch-dot" + (c.needsBorder ? " has-border" : "")}
-                      style={{ background: c.swatch }}
-                    >
-                      {printColorIds.includes(c.id) && <span className="rc-swatch-check">✔</span>}
-                    </span>
-                    <span className="rc-swatch-label">{c.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* 4. Выбор цветов лент */}
-        <div className="rc-step">
-          <span className="rc-step-title">4. Выбор цветов лент</span>
+          <span className="rc-step-title">3. Выбор цветов лент</span>
           <p className="rc-hint">
             Нажимайте на карточку, чтобы добавлять по 100 м. Скидка считается на общий объём всех лент вместе —
             неважно, одного цвета или разных.
@@ -243,6 +213,36 @@ export default function RibbonCalculator({ ribbons }) {
               ))
             )}
           </div>
+        </div>
+
+        {/* 4. Цвет печати */}
+        <div className="rc-step">
+          <span className="rc-step-title">4. Цвет печати</span>
+          <p className="rc-hint">Можно выбрать несколько цветов.</p>
+          {PRINT_COLOR_GROUPS.map((group) => (
+            <div className="rc-color-group" key={group.title}>
+              <span className="rc-color-group-title">{group.title}</span>
+              <div className="rc-swatch-row">
+                {group.colors.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    className={"rc-swatch" + (printColorIds.includes(c.id) ? " is-active" : "")}
+                    onClick={() => togglePrintColor(c.id)}
+                    aria-pressed={printColorIds.includes(c.id)}
+                  >
+                    <span
+                      className={"rc-swatch-dot" + (c.needsBorder ? " has-border" : "")}
+                      style={{ background: c.swatch }}
+                    >
+                      {printColorIds.includes(c.id) && <span className="rc-swatch-check">✔</span>}
+                    </span>
+                    <span className="rc-swatch-label">{c.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Силикон */}

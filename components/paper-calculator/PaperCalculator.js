@@ -24,9 +24,6 @@ import {
 import {
   DESIGN_FEE as LARGE_DESIGN_FEE,
   PRODUCTS as LARGE_PRODUCTS,
-  POSTCARD_QTY_MIN,
-  POSTCARD_QTY_MAX,
-  POSTCARD_QTY_STEP,
   NOTEBOOK_LARGE_STANDARD,
 } from "@/lib/paper-large-pricing";
 import { tagsPerSheet, customUnitPrice, doubleSidedUnitFee } from "@/lib/tag-pricing";
@@ -71,7 +68,6 @@ export default function PaperCalculator({ initialDivision = null }) {
   // ---- большие тиражи: состояние ----
   const [largeProductId, setLargeProductId] = useState(null);
   const [largeSizeId, setLargeSizeId] = useState(null);
-  const [postcardQty, setPostcardQty] = useState(POSTCARD_QTY_MIN);
 
   const designFee = hasArtwork === false ? SMALL_DESIGN_FEE : 0; // SMALL_DESIGN_FEE === LARGE_DESIGN_FEE (800)
 
@@ -181,9 +177,6 @@ export default function PaperCalculator({ initialDivision = null }) {
     ? largeProduct.sizes.find((s) => s.id === largeSizeId) || (!largeHasSizeChoice ? largeProduct.sizes[0] : null)
     : null;
 
-  const isPostcards = largeProductId === "postcards";
-  const postcardTotal = largeSize && largeSize.price != null ? (largeSize.price / 1000) * postcardQty : null;
-
   const isNotebooksLarge = largeProductId === "notebooks-catalogs";
 
   let largeOrder = null;
@@ -198,25 +191,14 @@ export default function PaperCalculator({ initialDivision = null }) {
     };
   } else if (largeProduct && largeSize) {
     const largeKnownPrice = largeSize.price != null;
-    if (isPostcards) {
-      largeOrder = {
-        productLabel: largeProduct.label,
-        sizeLabel: largeSize.label,
-        printLabel: null,
-        qty: postcardQty,
-        isEstimate: !largeKnownPrice,
-        total: largeKnownPrice ? postcardTotal + designFee : null,
-      };
-    } else {
-      largeOrder = {
-        productLabel: largeProduct.label,
-        sizeLabel: largeSize.label,
-        printLabel: largeProduct.printTypeLabel || null,
-        qty: null,
-        isEstimate: !largeKnownPrice,
-        total: largeKnownPrice ? largeSize.price + designFee : null,
-      };
-    }
+    largeOrder = {
+      productLabel: largeProduct.label,
+      sizeLabel: largeSize.label,
+      printLabel: largeProduct.printTypeLabel || null,
+      qty: null,
+      isEstimate: !largeKnownPrice,
+      total: largeKnownPrice ? largeSize.price + designFee : null,
+    };
   }
 
   // ================= ИТОГ =================
@@ -763,30 +745,6 @@ export default function PaperCalculator({ initialDivision = null }) {
                   )
                 )}
 
-                {isPostcards && largeSize && (
-                  <div className="rc-step">
-                    <span className="rc-step-title">Тираж</span>
-                    <div className="rc-slider-block">
-                      <div className="rc-slider-row">
-                        <input
-                          type="range"
-                          min={POSTCARD_QTY_MIN}
-                          max={POSTCARD_QTY_MAX}
-                          step={POSTCARD_QTY_STEP}
-                          value={postcardQty}
-                          onChange={(e) => setPostcardQty(Number(e.target.value))}
-                        />
-                        <span className="rc-slider-value">{postcardQty} шт</span>
-                      </div>
-                      {postcardTotal !== null && (
-                        <div className="rc-order-item">
-                          <span>{postcardQty} шт × {formatRub(largeSize.price / 1000)}/шт</span>
-                          <span className="rc-order-price">{formatRub(postcardTotal)}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
               </>
             )}
           </>
