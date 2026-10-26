@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import CartDrawer from "./CartDrawer";
+import SewnTagChina from "./SewnTagChina";
 import {
   DESIGN_FEE,
   SATIN_SIZES,
@@ -10,9 +11,6 @@ import {
   satinLineTotal,
   SATIN_COLORS,
   PRINT_COLORS,
-  JACQUARD_MIN_QTY,
-  JACQUARD_SIZES,
-  CHINA_INFO,
 } from "@/lib/sewn-tags-pricing";
 import { formatRub } from "@/lib/format";
 import "@/components/ribbon-calculator/ribbon-calculator.css";
@@ -31,10 +29,6 @@ export default function SewnTagCalculator() {
   const [printColorId, setPrintColorId] = useState(null);
   const [printColorCustom, setPrintColorCustom] = useState("");
 
-  const [jacquardSizeId, setJacquardSizeId] = useState(null);
-  const [jacquardSizeCustom, setJacquardSizeCustom] = useState("");
-  const [jacquardQty, setJacquardQty] = useState(JACQUARD_MIN_QTY);
-
   const [cartOpen, setCartOpen] = useState(false);
 
   const satinSize = SATIN_SIZES.find((s) => s.id === satinSizeId);
@@ -52,9 +46,6 @@ export default function SewnTagCalculator() {
     tagColorId !== null &&
     printColorId !== null &&
     (printColorId !== "other" || printColorCustom.trim().length > 0);
-
-  const jacquardSize = JACQUARD_SIZES.find((s) => s.id === jacquardSizeId);
-  const jacquardSizeLabel = jacquardSize ? (jacquardSize.id === "other" ? jacquardSizeCustom.trim() || "уточняется" : jacquardSize.label) : "—";
 
   const order = useMemo(
     () => ({
@@ -85,17 +76,6 @@ export default function SewnTagCalculator() {
     const text = encodeURIComponent(lines.join("\n"));
     return `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
   }, [satinSize, tagColor, printColorLabel, satinQty, hasArtwork, satinGrandTotal]);
-
-  const chinaWhatsappUrl = useMemo(() => {
-    const lines = ["Здравствуйте!", "Интересует производство вышитых (жаккардовых) бирок в Китае.", ""];
-    lines.push(`Размер: ${jacquardSizeLabel}`);
-    lines.push(`Количество: от ${jacquardQty} шт`);
-    lines.push(`Нужен дизайн: ${hasArtwork === false ? "да" : "нет, макет есть"}`);
-    lines.push("");
-    lines.push("Стоимость: уточните, пожалуйста.");
-    const text = encodeURIComponent(lines.join("\n"));
-    return `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
-  }, [jacquardSizeLabel, jacquardQty, hasArtwork]);
 
   return (
     <section className="rc content-section">
@@ -258,60 +238,7 @@ export default function SewnTagCalculator() {
           </>
         )}
 
-        {production === "china" && (
-          <div className="rc-step">
-            <div className="tag-china-info">
-              <div className="tag-china-fact">
-                <span className="tag-china-fact-label">Срок изготовления</span>
-                <span className="tag-china-fact-value">{CHINA_INFO.leadTime}</span>
-              </div>
-              <p className="tag-china-note">{CHINA_INFO.note}</p>
-            </div>
-
-            <div className="rc-step">
-              <span className="rc-step-title">Вышитые (жаккардовые) бирки</span>
-              <dl className="cart-fact-list">
-                <div className="cart-fact">
-                  <dt>Минимальный заказ</dt>
-                  <dd>{JACQUARD_MIN_QTY} шт</dd>
-                </div>
-              </dl>
-
-              <p className="rc-hint" style={{ marginTop: 12 }}>Выберите размер</p>
-              <div className="rc-choice-row">
-                {JACQUARD_SIZES.map((s) => (
-                  <button key={s.id} type="button" className={"rc-choice" + (jacquardSizeId === s.id ? " is-active" : "")} onClick={() => setJacquardSizeId(s.id)}>
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-              {jacquardSizeId === "other" && (
-                <label className="stc-text-field">
-                  <span>Укажите размер</span>
-                  <input type="text" value={jacquardSizeCustom} onChange={(e) => setJacquardSizeCustom(e.target.value)} placeholder="например, 35×90 мм" />
-                </label>
-              )}
-
-              <label className="stc-text-field" style={{ marginTop: 18 }}>
-                <span>Количество, шт</span>
-                <input type="number" min={JACQUARD_MIN_QTY} step={50} value={jacquardQty} onChange={(e) => setJacquardQty(Number(e.target.value))} />
-              </label>
-
-              <div className="rc-note" style={{ marginTop: 18 }}>
-                <p>Список размеров и стоимость для вышитых бирок пока уточняются — оставьте заявку, и мы посчитаем индивидуально.</p>
-              </div>
-
-              <a className="text-link" href={chinaWhatsappUrl} target="_blank" rel="noopener noreferrer" style={{ marginTop: 20 }}>
-                <span className="link-text">Уточнить в WhatsApp</span>
-                <span className="link-arrow" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M13 6l6 6-6 6" />
-                  </svg>
-                </span>
-              </a>
-            </div>
-          </div>
-        )}
+        {production === "china" && <SewnTagChina hasArtwork={hasArtwork} />}
       </div>
     </section>
   );

@@ -10,14 +10,24 @@ export default function Design() {
           полиграфию, чтобы ваша компания выглядела профессионально и запоминалась с первого
           взгляда. Все макеты сразу подготавливаются к производству.
         </p>
-        <a className="btn-primary" href="/designer-portfolio">
-          <span>Смотреть портфолио</span>
-          <span className="btn-arrow" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M13 6l6 6-6 6" />
-            </svg>
-          </span>
-        </a>
+        <div className="design-actions">
+          <a className="btn-primary" href="/designer-portfolio">
+            <span>Смотреть портфолио</span>
+            <span className="btn-arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </span>
+          </a>
+          <a className="btn-outline" href="/brief">
+            <span>Заполнить бриф</span>
+            <span className="btn-arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </span>
+          </a>
+        </div>
       </Reveal>
     </section>
   );

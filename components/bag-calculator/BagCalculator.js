@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BAG_PRICE, BAG_MIN_QTY, BAG_SIZE_MIN, BAG_SIZE_MAX, BAG_IMAGE } from "@/lib/bag-pricing";
+import { BAG_PRICE, BAG_MIN_QTY, BAG_SIZE_MIN, BAG_SIZE_MAX, BAG_IMAGE, BAG_HANDLES } from "@/lib/bag-pricing";
 import { formatRub } from "@/lib/format";
+import { OptionPhoto } from "@/components/china/ChinaOptions";
 import "@/components/ribbon-calculator/ribbon-calculator.css";
 import "./bag-calculator.css";
 
@@ -82,7 +83,28 @@ export default function BagCalculator() {
               <dt>Цена</dt>
               <dd>{formatRub(BAG_PRICE)}/шт</dd>
             </div>
+            <div className="cart-fact">
+              <dt>Минимальный заказ</dt>
+              <dd>{BAG_MIN_QTY} шт одного размера</dd>
+            </div>
           </dl>
+
+          <details className="cn-catalog">
+            <summary>
+              <span>Каталог ручек</span>
+              <svg className="cn-catalog-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </summary>
+            <div className="cn-catalog-body">
+              {BAG_HANDLES.map((h) => (
+                <figure className="cn-catalog-item" key={h.id}>
+                  <OptionPhoto src={h.src} alt={h.label} />
+                  <figcaption>{h.label}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </details>
 
           <label className="bag-field" style={{ maxWidth: 280 }}>
             <span>Введите номер размера с изображения ({BAG_SIZE_MIN}–{BAG_SIZE_MAX})</span>
@@ -97,7 +119,7 @@ export default function BagCalculator() {
           </label>
 
           <label className="bag-field" style={{ marginTop: 16, maxWidth: 280 }}>
-            <span>Количество, шт (минимум {BAG_MIN_QTY})</span>
+            <span>Количество, шт (минимум {BAG_MIN_QTY} одного размера)</span>
             <input type="number" min={BAG_MIN_QTY} value={qty} onChange={(e) => setQty(Number(e.target.value))} />
           </label>
 
@@ -133,7 +155,7 @@ export default function BagCalculator() {
           </a>
           {!(hasArtwork !== null && sizeValid && qty >= BAG_MIN_QTY) && (
             <p className="rc-hint rc-hint--center">
-              Ответьте про макет, укажите номер размера ({BAG_SIZE_MIN}–{BAG_SIZE_MAX}) и количество (минимум {BAG_MIN_QTY} шт).
+              Ответьте про макет, укажите номер размера ({BAG_SIZE_MIN}–{BAG_SIZE_MAX}) и количество (минимум {BAG_MIN_QTY} шт одного размера).
             </p>
           )}
         </div>

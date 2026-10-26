@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import CartDrawer from "./CartDrawer";
-import { DESIGN_FEE, PVD_SIZES, bagColorsFor, PRINT_COLOR_COUNTS, CHINA_INFO } from "@/lib/plastic-bag-pricing";
+import PlasticBagChina from "./PlasticBagChina";
+import { DESIGN_FEE, PVD_SIZES, bagColorsFor, PRINT_COLOR_COUNTS } from "@/lib/plastic-bag-pricing";
 import { formatRub } from "@/lib/format";
 import "@/components/ribbon-calculator/ribbon-calculator.css";
 import "./plastic-bag-calculator.css";
@@ -16,9 +17,6 @@ export default function PlasticBagCalculator() {
   const [sizeId, setSizeId] = useState(null);
   const [colorId, setColorId] = useState(null);
   const [printColorsId, setPrintColorsId] = useState(null);
-
-  const [chinaSize, setChinaSize] = useState("");
-  const [chinaQty, setChinaQty] = useState("");
 
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -57,17 +55,6 @@ export default function PlasticBagCalculator() {
     const text = encodeURIComponent(lines.join("\n"));
     return `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
   }, [order, hasArtwork]);
-
-  const chinaWhatsappUrl = useMemo(() => {
-    const lines = ["Здравствуйте!", "Интересуют полиэтиленовые пакеты с производством в Китае.", ""];
-    lines.push(`Размер пакета: ${chinaSize.trim() || "уточню"}`);
-    lines.push(`Количество: ${chinaQty.trim() || "уточню"}`);
-    lines.push(`Нужен дизайн: ${hasArtwork === false ? "да" : "нет, макет есть"}`);
-    lines.push("");
-    lines.push("Стоимость: уточните, пожалуйста.");
-    const text = encodeURIComponent(lines.join("\n"));
-    return `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
-  }, [chinaSize, chinaQty, hasArtwork]);
 
   function selectSize(id) {
     setSizeId(id);
@@ -191,39 +178,7 @@ export default function PlasticBagCalculator() {
           </>
         )}
 
-        {production === "china" && (
-          <div className="rc-step">
-            <div className="tag-china-info">
-              <div className="tag-china-fact">
-                <span className="tag-china-fact-label">Срок производства</span>
-                <span className="tag-china-fact-value">{CHINA_INFO.leadTime}</span>
-              </div>
-              <p className="tag-china-note">{CHINA_INFO.note}</p>
-            </div>
-
-            <div className="rc-step" style={{ paddingTop: 20 }}>
-              <span className="rc-step-title">Параметры заказа</span>
-              <label className="pb-field">
-                <span>Укажите размер пакета</span>
-                <input type="text" value={chinaSize} onChange={(e) => setChinaSize(e.target.value)} placeholder="например, 30 × 40 см" />
-              </label>
-              <label className="pb-field">
-                <span>Укажите необходимое количество</span>
-                <input type="text" value={chinaQty} onChange={(e) => setChinaQty(e.target.value)} placeholder="например, 5000 шт" />
-              </label>
-              <p className="rc-hint">Расчёт стоимости будет добавлен позже.</p>
-
-              <a className="text-link" href={chinaWhatsappUrl} target="_blank" rel="noopener noreferrer" style={{ marginTop: 8 }}>
-                <span className="link-text">Уточнить в WhatsApp</span>
-                <span className="link-arrow" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M13 6l6 6-6 6" />
-                  </svg>
-                </span>
-              </a>
-            </div>
-          </div>
-        )}
+        {production === "china" && <PlasticBagChina hasArtwork={hasArtwork} />}
       </div>
     </section>
   );

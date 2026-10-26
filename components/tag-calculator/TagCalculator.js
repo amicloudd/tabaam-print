@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import CartDrawer from "./CartDrawer";
-import ChinaPreview from "./ChinaPreview";
+import TagChina from "./TagChina";
 import {
   DESIGN_FEE,
   STANDARD,
@@ -15,7 +15,6 @@ import {
   doubleSidedUnitFee,
   ROUNDED_CORNERS_PER_TAG,
   TAG_HOLDER_PER_TAG,
-  CHINA_INFO,
 } from "@/lib/tag-pricing";
 import { formatRub } from "@/lib/format";
 import "@/components/ribbon-calculator/ribbon-calculator.css";
@@ -104,13 +103,6 @@ export default function TagCalculator() {
     const text = encodeURIComponent(lines.join("\n"));
     return `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
   }, [tagTypeLabel, sizeLabel, qty, hasArtwork, effectiveDoubleSided, roundedCorners, tagHolders, grandTotal]);
-
-  const chinaWhatsappUrl = useMemo(() => {
-    const text = encodeURIComponent(
-      "Здравствуйте!\nИнтересует производство подвесных картонных бирок в Китае.\nПодскажите, пожалуйста, подробности."
-    );
-    return `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
-  }, []);
 
   return (
     <section className="rc content-section">
@@ -378,36 +370,7 @@ export default function TagCalculator() {
           </>
         )}
 
-        {production === "china" && (
-          <div className="rc-step">
-            <div className="tag-china-info">
-              <div className="tag-china-fact">
-                <span className="tag-china-fact-label">Срок производства</span>
-                <span className="tag-china-fact-value">{CHINA_INFO.leadTime}</span>
-              </div>
-              <div className="tag-china-fact">
-                <span className="tag-china-fact-label">Минимальный заказ</span>
-                <span className="tag-china-fact-value">{CHINA_INFO.minQty}</span>
-              </div>
-              <p className="tag-china-note">{CHINA_INFO.note}</p>
-            </div>
-
-            <div className="rc-note" style={{ marginTop: 18 }}>
-              <p>Пока раздел находится в разработке, поэтому расчёты временно недоступны.</p>
-            </div>
-
-            <ChinaPreview />
-
-            <a className="text-link" href={chinaWhatsappUrl} target="_blank" rel="noopener noreferrer" style={{ marginTop: 24 }}>
-              <span className="link-text">Уточнить в WhatsApp</span>
-              <span className="link-arrow" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M13 6l6 6-6 6" />
-                </svg>
-              </span>
-            </a>
-          </div>
-        )}
+        {production === "china" && <TagChina hasArtwork={hasArtwork} />}
       </div>
     </section>
   );

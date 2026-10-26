@@ -323,6 +323,20 @@ body{background:var(--bg);font-family:var(--font-sans);color:var(--ink);}
 .btn-primary .btn-arrow{ display:inline-flex; width:14px; height:14px; transition:transform .3s cubic-bezier(.22,.61,.36,1); }
 .btn-primary:hover .btn-arrow{ transform:translateX(4px); }
 
+.design-actions{ display:flex; flex-wrap:wrap; justify-content:center; gap:12px; }
+.btn-outline{
+  display:inline-flex; align-items:center; gap:9px;
+  background:transparent; color:var(--ink);
+  font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;
+  padding:13px 23px; border-radius:8px; text-decoration:none;
+  border:1px solid var(--ink);
+  transition:background-color .25s ease, color .25s ease;
+}
+.btn-outline:hover{ background:var(--ink); color:var(--bg); }
+.btn-outline:focus-visible{ outline:2px solid var(--gold-2); outline-offset:3px; }
+.btn-outline .btn-arrow{ display:inline-flex; width:14px; height:14px; transition:transform .3s cubic-bezier(.22,.61,.36,1); }
+.btn-outline:hover .btn-arrow{ transform:translateX(4px); }
+
 .reveal{ opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s cubic-bezier(.22,.61,.36,1); }
 .reveal.is-visible{ opacity:1; transform:translateY(0); }
 
